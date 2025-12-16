@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Rock Rogue-lite</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <canvas id="gameCanvas"></canvas>
+    <div id="flash-overlay"></div>
+
+    <div id="ui-layer">
+        <div id="hud-top-left" class="hud-element">
+            <div class="stat-container">
+                <span data-label="HP">PV</span>
+                <div class="progress-bar">
+                    <div id="hp-bar" class="progress-fill hp-fill"></div>
+                </div>
+                <span id="hud-hp-text" class="stat-value">100/100</span>
+            </div>
+            <div class="stat-container">
+                <span data-label="SHIELD">Bouclier</span>
+                <div class="progress-bar">
+                    <div id="shield-bar" class="progress-fill shield-fill"></div>
+                </div>
+                <span id="hud-shield-text" class="stat-value">0</span>
+            </div>
+        </div>
+        <div id="hud-top-right" class="hud-element">
+            <span data-label="WAVE">Vague</span>: <span id="hud-wave">1</span><br>
+            <span data-label="CREDITS">Crédits</span>: $<span id="hud-credits">0</span>
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="overlay">
+        <h1 data-label="GAME_TITLE">DEAD IN SPACE</h1>
+        <p data-label="GAME_SUBTITLE">Shooter Rogue-lite</p>
+        <p data-label="CONTROLS">Flèches pour Bouger | Espace pour Tirer</p>
+        <button id="btn-start" data-label="START_GAME">DÉMARRER</button>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over-screen" class="overlay">
+        <h1 style="color: #f00;" data-label="GAME_OVER">PARTIE TERMINÉE</h1>
+        <p><span data-label="WAVE_REACHED">Vague Atteinte</span>: <span id="go-wave">0</span></p>
+        <button id="btn-restart" data-label="TRY_AGAIN">RÉESSAYER</button>
+    </div>
+
+    <!-- Upgrade Selection Screen -->
+    <div id="upgrade-screen" class="overlay">
+        <h1 data-label="CHOOSE_UPGRADE">CHOISISSEZ UNE AMÉLIORATION</h1>
+        <div id="upgrade-container" class="cards-container">
+            <!-- Cards injected by JS -->
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

@@ -12,7 +12,13 @@ import { CollisionManager } from './managers/CollisionManager.js';
 import { UpgradeManager } from './managers/UpgradeManager.js';
 import { UIManager } from './managers/UIManager.js';
 import { WaveManager } from './managers/WaveManager.js';
+import { SaveManager } from './managers/SaveManager.js';
+import { GameOverScreen } from './ui/GameOverScreen.js';
 
+/**
+ * Main Game Class
+ * Manages the game loop, state transitions, entity filtering, and coordinates all sub-systems (Managers).
+ */
 export class Game {
     constructor() {
         this.input = new InputHandler();
@@ -43,7 +49,10 @@ export class Game {
         this.collisionManager = new CollisionManager();
         this.upgradeManager = new UpgradeManager();
         this.uiManager = new UIManager();
+        this.uiManager = new UIManager();
         this.waveManager = new WaveManager();
+        this.saveManager = new SaveManager();
+        this.gameOverScreen = new GameOverScreen(this.saveManager);
 
         // Shop Costs (Legacy/Compatibility, kept for now if any logic checks it, though mostly moved to config/managers)
         this.costs = { ...CONFIG.SHOP.COSTS };
@@ -58,6 +67,9 @@ export class Game {
         requestAnimationFrame(t => this.loop(t));
     }
 
+    /**
+     * Resizes the canvas and background to match the window.
+     */
     resize() {
         CANVAS.width = window.innerWidth;
         CANVAS.height = window.innerHeight;
@@ -66,11 +78,24 @@ export class Game {
         }
     }
 
+    /**
+     * Initializes a new game session.
+     * Resets wave, credits (session), ship, and enemies.
+     * Applies upgrades from SaveManager.
+     */
     startNewGame() {
         this.state = STATE.PLAYING;
         this.wave = 1;
         this.credits = 0;
-        this.ship = new Ship(CANVAS.width / 2, CANVAS.height / 2);
+        // Apply Upgrades
+        const shipConfig = {
+            damage: CONFIG.PERMANENT_UPGRADES.BASE_DAMAGE.INCREMENT * this.saveManager.getUpgradeLevel('BASE_DAMAGE'),
+            hp: CONFIG.PERMANENT_UPGRADES.BASE_HP.INCREMENT * this.saveManager.getUpgradeLevel('BASE_HP'),
+            shield: CONFIG.PERMANENT_UPGRADES.BASE_SHIELD.INCREMENT * this.saveManager.getUpgradeLevel('BASE_SHIELD'),
+            teleport: this.saveManager.getUpgradeLevel('TELEPORT') > 0
+        };
+
+        this.ship = new Ship(CANVAS.width / 2, CANVAS.height / 2, shipConfig);
         this.bullets = [];
         this.asteroids = [];
         this.powerups = [];
@@ -89,7 +114,24 @@ export class Game {
 
     gameOver() {
         this.state = STATE.GAMEOVER;
-        this.uiManager.showGameOver(this.wave);
+        this.state = STATE.GAMEOVER;
+        // Save Credits
+        this.saveManager.addCredits(this.credits);
+        // Show Game Over Screen
+        this.gameOverScreen.show(this.wave, this.credits);
+        this.uiManager.showGameOver(this.wave); // Legacy UI call, might need to disable if it overlaps or integrates well. 
+        // NOTE: The legacy uiManager.showGameOver likely shows the old overlay. 
+        // I should probably disable the old one or ensure they don't conflict. 
+        // Based on index.html, #game-over-screen IS the one used by UIManager? 
+        // Let's check UIManager.js content if possible, OR just assume I'm taking over.
+        // Actually, looking at index.html, the new GameOverScreen uses #game-over-screen.
+        // The old code probably also used it. I should make sure I don't double show or overwrite.
+        // I'll assume my new logic handles the showing and population, so I might remove the old call or let it be if it just toggles visibility.
+        // But wait, the old call takes wave only. My new one takes credits too and renders shop.
+        // I will COMMENT OUT the old UIManager call to avoid conflicts.
+        // this.uiManager.showGameOver(this.wave); 
+        // Actually, better to just let GameOverScreen handle the display block.
+        document.getElementById('game-over-screen').style.display = 'block';
     }
 
     // Called by UpgradeManager
@@ -102,6 +144,10 @@ export class Game {
         this.upgradeManager.showUpgradeSelection(this);
     }
 
+    /**
+     * Main Game Loop
+     * @param {number} timestamp - Current time from requestAnimationFrame
+     */
     loop(timestamp) {
         const dt = (timestamp - this.lastTime) / 1000;
         this.lastTime = timestamp;

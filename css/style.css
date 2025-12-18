@@ -273,3 +273,89 @@ canvas {
     font-size: 14px;
     line-height: 1.4;
 }
+
+/* Shop Grid */
+.shop-section {
+    margin-top: 20px;
+    border-top: 1px solid #444;
+    padding-top: 10px;
+}
+
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 10px;
+    max-width: 800px;
+}
+
+.shop-card {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #444;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.shop-card:hover {
+    border-color: #0ff;
+    background: rgba(0, 50, 50, 0.5);
+}
+
+.shop-card h3 {
+    margin: 5px 0;
+    color: #0ff;
+    font-size: 16px;
+}
+
+.shop-card .desc {
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 10px;
+    height: 30px;
+    /* Fixed height for alignment */
+    overflow: hidden;
+}
+
+.shop-card .stats {
+    font-size: 12px;
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.shop-card button {
+    width: 100%;
+    padding: 5px;
+    font-size: 14px;
+    margin: 0;
+    background: #004400;
+    border-color: #0f0;
+}
+
+.shop-card button:hover {
+    background: #006600;
+}
+
+.shop-card button:disabled {
+    background: #222;
+    border-color: #444;
+    color: #666;
+    cursor: default;
+}
+
+.shop-card.locked button {
+    background: #440000;
+    border-color: #f00;
+}
+
+.shop-card.unlocked {
+    border-color: #0f0;
+}
+
+.shop-card.unlocked button {
+    background: #222;
+    color: #0f0;
+    border: none;
+    cursor: default;
+}

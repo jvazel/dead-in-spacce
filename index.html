@@ -48,7 +48,19 @@
     <div id="game-over-screen" class="overlay">
         <h1 style="color: #f00;" data-label="GAME_OVER">PARTIE TERMINÉE</h1>
         <p><span data-label="WAVE_REACHED">Vague Atteinte</span>: <span id="go-wave">0</span></p>
-        <button id="btn-restart" data-label="TRY_AGAIN">RÉESSAYER</button>
+        <p><span data-label="CREDITS_EARNED">Crédits Gagnés</span>: <span id="go-credits">0</span></p>
+        <p><span data-label="TOTAL_CREDITS">Total Crédits</span>: <span id="go-total-credits"
+                style="color: #ff0;">0</span></p>
+
+        <div class="shop-section">
+            <h2 data-label="PERMANENT_UPGRADES">AMÉLIORATIONS</h2>
+            <div id="permanent-upgrade-container" class="shop-grid">
+                <!-- Shop items injected by JS -->
+            </div>
+        </div>
+
+        <button id="btn-restart" data-label="TRY_AGAIN"
+            style="margin-top: 20px; font-size: 1.2em; font-weight: bold;">RÉESSAYER</button>
     </div>
 
     <!-- Upgrade Selection Screen -->

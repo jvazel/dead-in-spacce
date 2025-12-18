@@ -22,9 +22,10 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
 
 ### Graphismes
 - **Fond étoilé parallax** animé en temps réel
-- **Améliorer le Bouclier** : +1 Bouclier Max (permanent, se régénère lentement)
+- **Améliorations Permanentes** : Dépensez vos crédits dans le nouveau menu Game Over pour améliorer votre vaisseau (PV, Dégâts, Bouclier).
+- **Téléportation** : Débloquez la capacité de vous téléporter avec la flèche du bas.
+- **Bouclier** : +1 Bouclier Max (permanent, se régénère lentement)
 - **Cadence de Tir** : +10% de vitesse de tir (cumulatif)
-- **Durée Multi-Tirs** : +2 secondes au power-up Multi-Tirs
 - **Drône Satellite** : Un drône orbite et tire automatiquement (cumulatif)
 - **Mines de Proximité** : Largue des mines explosives périodiquement (déblocage)
 
@@ -51,7 +52,12 @@ space-rock/
 └── js/
     ├── main.js         # Point d'entrée JavaScript
     ├── Game.js         # Boucle de jeu et logique principale
-    ├── config.js       # Configuration centralisée
+    ├── config.js       # Agrégateur de configuration
+    ├── config/         # Dossier de configuration modulaire
+    │   ├── game.js     # Paramètres globaux
+    │   ├── entities.js # Stats des entités
+    │   ├── powerups.js # Paramètres des bonus
+    │   └── upgrades.js # Paramètres du shop
     ├── labels.js       # Traductions (i18n)
     ├── utils.js        # Utilitaires mathématiques
     ├── canvas.js       # Contexte Canvas
@@ -69,7 +75,13 @@ space-rock/
 ### Modules JavaScript Clés
 
 #### Configuration et Utilitaires
-- **`config.js`** : **Fichier central** pour tous les paramètres du jeu (vitesses, PV, coûts, couleurs, etc.). Modifiez ce fichier pour équilibrer le jeu.
+#### Configuration et Utilitaires
+- **`config.js`** : Fichier central exportant l'objet `CONFIG`. Il agrège les modules du dossier `config/`.
+- **`config/`** : Contient les réglages séparés pour une meilleure maintenabilité :
+  - `game.js` : Difficulté, vagues.
+  - `entities.js` : PV, dégâts, vitesses.
+  - `visuals.js` : Couleurs, particules.
+  - `powerups.js` : Types et poids des bonus.
 - **`labels.js`** : Toutes les chaînes de texte pour l'internationalisation.
 - **`utils.js`** : Fonctions mathématiques (`dist`, `rand`, `checkCircleCollision`).
 - **`canvas.js`** : Exporte le contexte de rendu Canvas 2D global.

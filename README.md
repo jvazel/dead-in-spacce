@@ -47,31 +47,44 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
 ## 📘 Manuel du Code
 
 ### Structure du Projet Modulaire
-Le code a été refactorisé pour être hautement modulaire et extensible :
+Le code est organisé en modules ES6 pour séparer les données, la logique système et les objets de jeu.
 
-```
-space-rock/
-├── assets/             # Sprites et images (PNG)
-├── js/
-│   ├── Game.js         # Coordinateur central (Boucle de jeu)
-│   ├── config/         # Fichiers de configuration séparés
-│   │   ├── game.js     # Vagues, difficulté, fréquences
-│   │   ├── entities.js # Statistiques (Vitesse, PV, dégâts)
-│   │   ├── powerups.js # Bonus temporaires
-│   │   └── upgrades.js # Améliorations permanentes (shop)
-│   ├── managers/       # Systèmes logique
-│   │   ├── CollisionManager.js # Détection et résolution des impacts
-│   │   ├── WaveManager.js      # Contrôle du spawn (Astéroïdes et Boss)
-│   │   ├── SaveManager.js      # Gestion de la progression et crédits
-│   │   ├── UpgradeManager.js   # Galerie de choix de upgrades temporaires
-│   │   └── UIManager.js        # Gestion du HUD et des overlays
-│   └── entities/       # Objets de jeu
-│       ├── Boss.js     # IA complexe du boss
-│       ├── Ship.js     # Logique complexe du joueur
-│       ├── UFO.js      # Ennemi tactique
-│       ├── BlackHole.js# Perturbation physique
-│       └── ...
-```
+#### 📂 [assets/](file:///c:/Users/BL207380/Desktop/Projects/space-rock/assets)
+Contient toutes les ressources graphiques du jeu (fichiers PNG) : `ship.png`, `boss.png`, `ufo.png`, `black_hole.png`, etc.
+
+#### 📂 [js/config/](file:///c:/Users/BL207380/Desktop/Projects/space-rock/js/config)
+Centralise tous les paramètres du jeu pour un équilibrage facile :
+- **`game.js`** : Paramètres globaux (fréquence des boss, vagues, difficulté).
+- **`entities.js`** : Statistiques brutes de toutes les entités (PV, vitesse, rayon).
+- **`upgrades.js`** : Définition des prix et des paliers du magasin permanent.
+- **`powerups.js`** : Effets et durées des bonus temporaires.
+
+#### 📂 [js/managers/](file:///c:/Users/BL207380/Desktop/Projects/space-rock/js/managers)
+Cerveaux logiques qui traitent les interactions entre entités :
+- **`CollisionManager.js`** : Gère la physique des impacts, les explosions, et le raycasting du laser.
+- **`SaveManager.js`** : Gère la persistance (session) des crédits et des améliorations achetées.
+- **`WaveManager.js`** : Orchestre le spawn des astéroïdes et l'apparition dramatique du Boss.
+- **`UpgradeManager.js`** : Gère les choix d'améliorations offerts à la fin de chaque vague.
+- **`UIManager.js`** : Met à jour le HUD (barres de vie, score, timers).
+
+#### 📂 [js/entities/](file:///c:/Users/BL207380/Desktop/Projects/space-rock/js/entities)
+Définition du comportement individuel des objets :
+- **`Ship.js`** : Physique à inertie, gestion des armes et systèmes de survie du joueur.
+- **`Boss.js`** : Système d'états avec plusieurs phases d'attaque (`spiral`, `burst`).
+- **`UFO.js`** : Ennemi avec trajectoire sinusoïdale et tir ciblé.
+- **`BlackHole.js`** : Entité physique générant des forces d'attraction.
+- **`Drone.js`** : Allié orbital qui assiste le joueur.
+- **`Asteroid.js`**, **`Bullet.js`**, **`Mine.js`**, **`Particle.js`**, **`PowerUp.js`**.
+
+#### 📂 [js/ui/](file:///c:/Users/BL207380/Desktop/Projects/space-rock/js/ui)
+Composants d'interface complexes :
+- **`GameOverScreen.js`** : Gère l'affichage du score final et l'interface du magasin permanent.
+
+#### 📄 Fichiers Racines (Logic)
+- [Game.js](file:///c:/Users/BL207380/Desktop/Projects/space-rock/js/Game.js) : Boucle de jeu principale et orchestration globale.
+- [Assets.js](file:///c:/Users/BL207380/Desktop/Projects/space-rock/js/Assets.js) : Préchargeur d'images.
+- [Background.js](file:///c:/Users/BL207380/Desktop/Projects/space-rock/js/Background.js) : Moteur de rendu du fond étoilé parallax.
+- [InputHandler.js](file:///c:/Users/BL207380/Desktop/Projects/space-rock/js/InputHandler.js) : Capture et traite les entrées clavier sans latence.
 
 ### Concepts Techniques
 - **Delta Time** : Garantit une vitesse de jeu identique quelque soit le taux de rafraîchissement.

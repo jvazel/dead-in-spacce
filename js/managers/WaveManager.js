@@ -1,5 +1,6 @@
 import { CONFIG } from '../config.js';
 import { Asteroid } from '../entities/Asteroid.js';
+import { Boss } from '../entities/Boss.js';
 import { CANVAS } from '../canvas.js';
 import { rand, dist } from '../utils.js';
 import { STATE } from '../constants.js';
@@ -11,6 +12,12 @@ export class WaveManager {
     startWave(game) {
         game.state = STATE.PLAYING;
         game.uiManager.hideOverlays();
+
+        // Check for Boss Wave
+        if (game.wave > 0 && game.wave % CONFIG.GAME.BOSS_FREQUENCY === 0) {
+            game.boss = new Boss(CANVAS.width / 2, -100, game.wave); // Spawn off-screen top
+            return;
+        }
 
         // Spawn Asteroids
         const count = CONFIG.GAME.WAVE_START_COUNT + game.wave;

@@ -42,6 +42,7 @@ export class Game {
         this.blackHoles = [];
         this.blackHoleTimer = 0;
         this.trails = [];
+        this.boss = null;
         this.particles = [];
         this.background = new Background();
 
@@ -92,6 +93,7 @@ export class Game {
             damage: CONFIG.PERMANENT_UPGRADES.BASE_DAMAGE.INCREMENT * this.saveManager.getUpgradeLevel('BASE_DAMAGE'),
             hp: CONFIG.PERMANENT_UPGRADES.BASE_HP.INCREMENT * this.saveManager.getUpgradeLevel('BASE_HP'),
             shield: CONFIG.PERMANENT_UPGRADES.BASE_SHIELD.INCREMENT * this.saveManager.getUpgradeLevel('BASE_SHIELD'),
+            fireRate: CONFIG.PERMANENT_UPGRADES.BASE_FIRE_RATE.INCREMENT * this.saveManager.getUpgradeLevel('BASE_FIRE_RATE'),
             teleport: this.saveManager.getUpgradeLevel('TELEPORT') > 0
         };
 
@@ -174,6 +176,8 @@ export class Game {
         }
 
         this.background.update(dt, this.ship);
+
+        // --- ENTITIES UPDATES ---
         this.ship.update(dt, this.input, this);
         this.bullets.forEach(b => b.update(dt, this.asteroids));
         this.asteroids.forEach(a => a.update(dt));
@@ -181,27 +185,30 @@ export class Game {
         this.mines.forEach(m => m.update(dt));
         this.trails.forEach(t => t.update(dt));
         this.particles.forEach(p => p.update(dt));
+        this.updateUFOs(dt);
+        this.ufos.forEach(u => u.update(dt, this));
+        if (this.boss) this.boss.update(dt, this);
 
-        // Use Manager
+        // Update Black Holes
+        this.updateBlackHoles(dt);
+
+        // --- COLLISIONS & CLEANUP ---
         this.collisionManager.checkCollisions(this);
 
         this.bullets = this.bullets.filter(b => !b.markedForDeletion);
         this.asteroids = this.asteroids.filter(a => !a.markedForDeletion);
         this.powerups = this.powerups.filter(p => !p.markedForDeletion);
+        this.ufos = this.ufos.filter(u => !u.markedForDeletion);
         this.mines = this.mines.filter(m => !m.markedForDeletion);
         this.trails = this.trails.filter(t => !t.markedForDeletion);
         this.particles = this.particles.filter(p => !p.markedForDeletion);
 
-        this.particles = this.particles.filter(p => !p.markedForDeletion);
+        if (this.boss && this.boss.markedForDeletion) {
+            this.boss = null;
+        }
 
-        // Update UFOs
-        this.updateUFOs(dt);
-
-        // Update Black Holes (Could also be in a BlackHoleManager or Entity Manager)
-        this.updateBlackHoles(dt);
-
-        // Wave Clear Check
-        if (this.asteroids.length === 0) {
+        // --- WAVE MANAGEMENT ---
+        if (this.state === STATE.PLAYING && this.asteroids.length === 0 && !this.boss) {
             this.showUpgradeSelection();
         }
 
@@ -284,6 +291,7 @@ export class Game {
 
         pullEntity(this.ship);
         this.asteroids.forEach(pullEntity);
+        if (this.boss) pullEntity(this.boss);
         this.enemies.forEach(pullEntity);
         this.ufos.forEach(pullEntity);
         this.bullets.forEach(pullEntity);
@@ -303,6 +311,7 @@ export class Game {
         this.powerups.forEach(p => p.draw(CTX));
         this.asteroids.forEach(a => a.draw(CTX));
         this.bullets.forEach(b => b.draw(CTX));
+        if (this.boss) this.boss.draw(CTX);
         if (this.ship) this.ship.draw(CTX, this.input);
     }
 

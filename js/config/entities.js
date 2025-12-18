@@ -65,7 +65,7 @@ export const ENTITY_CONFIG = {
         KILL_RADIUS: 20
     },
     UFO: {
-        SPEED: 100,
+        SPEED: 60,
         FIRE_RATE: 2.0,
         SCORE: 200,
         HP: 50,
@@ -74,5 +74,16 @@ export const ENTITY_CONFIG = {
         SPAWN_INTERVAL: 60, // Seconds
         BULLET_SPEED: 300,
         DROP_CHANCE: 0.5 // 50% chance for powerup drop
+    },
+    BOSS: {
+        RADIUS: 60,
+        SPEED: 50,
+        HP: 1000,
+        ATTACK_RATE: 1.5,
+        BULLET_SPEED: 250,
+        MINION_SPAWN_CHANCE: 0.2,
+        COLOR: '#ff0000',
+        GLOW_COLOR: '#ff3333',
+        SCORE: 1000
     }
 };

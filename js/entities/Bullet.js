@@ -4,11 +4,12 @@ import { CONFIG } from '../config.js';
 export class Bullet extends Entity {
     constructor(x, y, angle, properties = {}) {
         super(x, y, CONFIG.BULLET.RADIUS);
-        this.speed = CONFIG.BULLET.SPEED;
+        this.speed = properties.speed || CONFIG.BULLET.SPEED;
         this.angle = angle;
         this.velX = Math.cos(angle) * this.speed;
         this.velY = Math.sin(angle) * this.speed;
         this.life = CONFIG.BULLET.LIFE; // seconds
+        this.enemy = properties.enemy || false;
 
         // Properties
         this.homing = properties.homing || false;

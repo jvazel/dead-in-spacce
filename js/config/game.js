@@ -2,7 +2,8 @@ export const GAME_CONFIG = {
     WAVE_START_COUNT: 2, // + wave number
     CREDITS_START: 0,
     DIFFICULTY_SCALING_WAVES: 5, // Every 5 waves
-    HP_SCALING_FACTOR: 1.5 // +50% HP
+    HP_SCALING_FACTOR: 1.5, // +50% HP
+    BOSS_FREQUENCY: 4 // Boss every 4 waves
 };
 
 export const VISUALS_CONFIG = {

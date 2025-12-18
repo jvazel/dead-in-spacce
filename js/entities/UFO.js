@@ -56,9 +56,9 @@ export class UFO extends Entity {
         const bullet = new Bullet(this.x, this.y, angle, {
             color: '#ff00ff',
             speed: CONFIG.UFO.BULLET_SPEED,
-            damage: 10 // Fixed UFO damage
+            damage: 10, // Fixed UFO damage
+            enemy: true
         });
-        bullet.isEnemy = true;
         game.bullets.push(bullet);
     }
 

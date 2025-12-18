@@ -32,7 +32,10 @@ export class Ship extends Entity {
         this.hp = CONFIG.SHIP.BASE_HP + (stats.hp || 0); // Start full
         this.maxShield = CONFIG.SHIP.BASE_MAX_SHIELD + (stats.shield || 0);
         this.shield = CONFIG.SHIP.BASE_SHIELD + (stats.shield || 0); // Start full
-        this.fireRateDelay = CONFIG.SHIP.BASE_FIRE_RATE;
+        this.maxShield = CONFIG.SHIP.BASE_MAX_SHIELD + (stats.shield || 0);
+        this.shield = CONFIG.SHIP.BASE_SHIELD + (stats.shield || 0); // Start full
+        // Reduce delay (increase rate)
+        this.fireRateDelay = Math.max(0.1, CONFIG.SHIP.BASE_FIRE_RATE - (stats.fireRate || 0));
         this.damage = CONFIG.SHIP.BASE_DAMAGE + (stats.damage || 0);
         this.droneDamage = CONFIG.DRONE.BASE_DAMAGE;
         this.lastShotTime = 0;

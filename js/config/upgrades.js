@@ -119,6 +119,14 @@ export const UPGRADE_CONFIG = {
             COST: 500,
             TYPE: 'unlock',
             DESCRIPTION: 'Débloque la capacité de se téléporter (Touche Bas).'
+        },
+        BASE_FIRE_RATE: {
+            LABEL: 'Cadence de Tir Rapide',
+            COST: 200,
+            COST_SCALING: 1.5,
+            INCREMENT: 0.02, // Reduces delay by 0.02s
+            MAX_LEVEL: 10,
+            DESCRIPTION: 'Augmente la cadence de tir (Réduit le délai de 0.02s).'
         }
     }
 };

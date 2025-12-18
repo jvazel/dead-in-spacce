@@ -20,136 +20,61 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
 
 ## 🎮 Fonctionnalités
 
-### Graphismes
-- **Fond étoilé parallax** animé en temps réel
-- **Améliorations Permanentes** : Dépensez vos crédits dans le nouveau menu Game Over pour améliorer votre vaisseau (PV, Dégâts, Bouclier).
-- **Téléportation** : Débloquez la capacité de vous téléporter avec la flèche du bas.
-- **Bouclier** : +1 Bouclier Max (permanent, se régénère lentement)
-- **Cadence de Tir** : +10% de vitesse de tir (cumulatif)
-- **Drône Satellite** : Un drône orbite et tire automatiquement (cumulatif)
-- **Mines de Proximité** : Largue des mines explosives périodiquement (déblocage)
+### Système de Boss
+- **Vagues de Boss** : Un boss imposant apparaît toutes les 4 vagues.
+- **Phases de Combat** : Le boss alterne entre deux phases d'attaque (Tir circulaire en spirale et Salve ciblée).
+- **IA Évolutive** : Le boss se déplace vers le joueur et sa difficulté augmente avec les vagues.
 
-Les prix augmentent de 50% après chaque achat (sauf Réparer).
+### Ennemis et Obstacles
+- **OVNIs** : Apparaissent périodiquement, tirent sur le joueur et se déplacent avec un mouvement sinusoïdal.
+- **Trous Noirs** : Génèrent une force d'attraction sur tout ce qui les entoure (joueur, astéroïdes, projectiles). Attention à ne pas vous faire aspirer !
+- **Astéroïdes** : Système de fragmentation (large → 2× medium → 2× small).
 
-### Internationalisation
-- **Français** par défaut
-- Système i18n extensible dans `js/labels.js`
-- Tous les textes sont centralisés et facilement modifiables
+### Progression Rogue-lite
+- **Améliorations Permanentes** : Dépensez vos crédits dans le menu Game Over pour améliorer votre vaisseau de façon persistante :
+    - **PV & Bouclier** : Augmentez votre résistance maximale.
+    - **Dégâts** : Améliorez la puissance de chaque projectile.
+    - **Cadence de Tir** : Réduisez le délai entre les tirs.
+    - **Téléportation** : Débloquez la capacité de sauter dans l'espace (Flèche Bas).
+- **Power-ups Temporaires** : Récupérez des bonus sur les ennemis détruits (Multi-shot, Laser, Homing, Piercing, etc.).
 
 ## 🎯 Contrôles
 
-- **Flèches directionnelles** : Déplacer et orienter le vaisseau
-- **Espace** : Tirer (balles normales, multi-tirs, ou laser selon les power-ups actifs)
+- **Flèches directionnelles** : Déplacer et orienter le vaisseau.
+- **Flèche Bas** : Téléportation (si débloquée).
+- **Espace** : Tirer (balles normales, multi-tirs, ou laser selon les power-ups).
 
 ## 📘 Manuel du Code
 
-### Structure du Projet
+### Structure du Projet Modulaire
+Le code a été refactorisé pour être hautement modulaire et extensible :
+
 ```
 space-rock/
-├── index.html          # Point d'entrée HTML
-├── css/
-│   └── style.css       # Styles UI (HUD, overlays)
-└── js/
-    ├── main.js         # Point d'entrée JavaScript
-    ├── Game.js         # Boucle de jeu et logique principale
-    ├── config.js       # Agrégateur de configuration
-    ├── config/         # Dossier de configuration modulaire
-    │   ├── game.js     # Paramètres globaux
-    │   ├── entities.js # Stats des entités
-    │   ├── powerups.js # Paramètres des bonus
-    │   └── upgrades.js # Paramètres du shop
-    ├── labels.js       # Traductions (i18n)
-    ├── utils.js        # Utilitaires mathématiques
-    ├── canvas.js       # Contexte Canvas
-    ├── InputHandler.js # Gestion des entrées clavier
-    ├── Background.js   # Fond étoilé parallax
-    └── entities/
-        ├── Entity.js   # Classe parente (screen wrap)
-        ├── Ship.js     # Vaisseau du joueur
-        ├── Asteroid.js # Astéroïdes ennemis
-        ├── Bullet.js   # Projectiles
-        ├── PowerUp.js  # Power-ups (3 types)
-        └── Particle.js # Particules visuelles
+├── assets/             # Sprites et images (PNG)
+├── js/
+│   ├── Game.js         # Coordinateur central (Boucle de jeu)
+│   ├── config/         # Fichiers de configuration séparés
+│   │   ├── game.js     # Vagues, difficulté, fréquences
+│   │   ├── entities.js # Statistiques (Vitesse, PV, dégâts)
+│   │   ├── powerups.js # Bonus temporaires
+│   │   └── upgrades.js # Améliorations permanentes (shop)
+│   ├── managers/       # Systèmes logique
+│   │   ├── CollisionManager.js # Détection et résolution des impacts
+│   │   ├── WaveManager.js      # Contrôle du spawn (Astéroïdes et Boss)
+│   │   ├── SaveManager.js      # Gestion de la progression et crédits
+│   │   ├── UpgradeManager.js   # Galerie de choix de upgrades temporaires
+│   │   └── UIManager.js        # Gestion du HUD et des overlays
+│   └── entities/       # Objets de jeu
+│       ├── Boss.js     # IA complexe du boss
+│       ├── Ship.js     # Logique complexe du joueur
+│       ├── UFO.js      # Ennemi tactique
+│       ├── BlackHole.js# Perturbation physique
+│       └── ...
 ```
 
-### Modules JavaScript Clés
-
-#### Configuration et Utilitaires
-#### Configuration et Utilitaires
-- **`config.js`** : Fichier central exportant l'objet `CONFIG`. Il agrège les modules du dossier `config/`.
-- **`config/`** : Contient les réglages séparés pour une meilleure maintenabilité :
-  - `game.js` : Difficulté, vagues.
-  - `entities.js` : PV, dégâts, vitesses.
-  - `visuals.js` : Couleurs, particules.
-  - `powerups.js` : Types et poids des bonus.
-- **`labels.js`** : Toutes les chaînes de texte pour l'internationalisation.
-- **`utils.js`** : Fonctions mathématiques (`dist`, `rand`, `checkCircleCollision`).
-- **`canvas.js`** : Exporte le contexte de rendu Canvas 2D global.
-- **`InputHandler.js`** : Gère les entrées clavier avec état persistant.
-
-#### Cœur du Jeu
-- **`main.js`** : Point d'entrée, initialise l'instance de `Game`.
-- **`Game.js`** : Classe principale qui gère :
-  - La boucle de jeu (`loop`) avec delta time
-  - Les états (`MENU`, `PLAYING`, `SHOP`, `GAMEOVER`)
-  - Les collisions (balles, laser, ship, power-ups)
-  - L'interface utilisateur (HUD, magasin)
-  - Le système de crédits et d'achats
-
-#### Visuels
-- **`Background.js`** : Fond étoilé avec parallax (3 couches à vitesses différentes).
-- **`Particle.js`** : Particules pour explosions et effets visuels.
-
-#### Entités (`js/entities/`)
-- **`Entity.js`** : Classe parente avec position et "screen wrap" (téléportation aux bords).
-- **`Ship.js`** : Vaisseau du joueur avec :
-  - Physique à inertie
-  - Système de tir (normal, multi-shot, laser)
-  - Gestion des power-ups (timers, états)
-  - Bouclier régénérant
-  - Rendu avec effets glow
-- **`Asteroid.js`** : Ennemis avec forme aléatoire et système de fragmentation (large → 2× medium → 2× small).
-- **`Bullet.js`** : Projectiles avec durée de vie limitée.
-- **`PowerUp.js`** : 3 types de bonus avec visuels distincts (carré, triangle, diamant).
-
-### Modifier le Jeu
-
-#### Équilibrage
-Ouvrez `js/config.js` et modifiez les valeurs. Exemples :
-- `SHIP.BASE_HP` : Points de vie de départ
-- `POWERUP.DROP_CHANCE` : Probabilité d'apparition des power-ups (0.1 = 10%)
-- `SHOP.COSTS` : Prix des améliorations
-- `ASTEROID.SPAWN_DISTANCE` : Distance minimale de spawn
-
-#### Ajouter une Langue
-1. Ouvrez `js/labels.js`
-2. Dupliquez l'objet `LABELS`
-3. Traduisez toutes les valeurs
-4. Exportez le nouvel objet
-
-#### Nouveaux Power-Ups
-1. Ajoutez un type dans `CONFIG.POWERUP.TYPES` (`config.js`)
-2. Ajoutez le visuel dans `PowerUp.js` (méthode `draw`)
-3. Ajoutez la logique d'effet dans `Game.js` (méthode `checkCollisions`)
-4. Ajoutez les propriétés nécessaires dans `Ship.js`
-
-## 🎨 Personnalisation Visuelle
-
-Tous les paramètres visuels sont dans `CONFIG.VISUALS` (`config.js`) :
-- Couleurs des entités (avec codes hex)
-- Paramètres des particules (vitesse, durée, quantité)
-- Paramètres du background (nombre d'étoiles, vitesses)
-
-## 🔧 Technologies Utilisées
-
-- **HTML5 Canvas** pour le rendu 2D
-- **ES6 Modules** pour l'organisation du code
-- **JavaScript vanilla** (aucune dépendance externe pour le jeu)
-- **CSS3** pour l'interface utilisateur
-
-## 📝 Notes Techniques
-
-- Le jeu utilise **delta time** pour garantir un framerate constant indépendamment des performances.
-- Les collisions utilisent des **cercles englobants** pour les performances.
-- Le laser utilise un **algorithme de raycast** pour la détection de collision précise.
-- Le background utilise un **système de parallax à 3 couches** pour la profondeur visuelle.
+### Concepts Techniques
+- **Delta Time** : Garantit une vitesse de jeu identique quelque soit le taux de rafraîchissement.
+- **Système de Managers** : Chaque manager a une responsabilité unique, facilitant le débogage et l'ajout de fonctionnalités.
+- **Collisions Avancées** : Support pour les cercles englobants et raycasting pour le laser haute précision.
+- **Graphismes Néon** : Rendu optimisé utilisant les gradients et les effets de flou (glow) natifs du canvas.

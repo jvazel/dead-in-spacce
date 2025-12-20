@@ -37,7 +37,7 @@ export const POWERUP_CONFIG = {
                 BLAST_RADIUS: 100,
                 DAMAGE: 50,
                 WEIGHT: 1,
-                COLOR: '#ff8800' // Orange
+                COLOR: '#ff0000' // Red
             },
             PIERCING: {
                 DURATION: 10,
@@ -54,8 +54,13 @@ export const POWERUP_CONFIG = {
                 DURATION: 15,
                 WEIGHT: 1,
                 COLOR: '#00ffff', // Cyan
-                TRAIL_LIFE: 0.5,
+                TRAIL_LIFE: 1.0,
                 SPAWN_RATE: 0.05
+            },
+            BOUNCE: {
+                DURATION: 12,
+                WEIGHT: 0.8,
+                COLOR: '#0000ff' // Blue
             },
             HEALTH: {
                 HEAL_AMOUNT: 30,

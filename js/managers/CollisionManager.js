@@ -70,9 +70,7 @@ export class CollisionManager {
             // Ship vs Enemy Mines
             for (const m of game.mines) {
                 if (m.isEnemy && checkCircleCollision(game.ship, m)) {
-                    game.ship.takeDamage(CONFIG.MINE.DAMAGE || 20);
-                    m.markedForDeletion = true;
-                    this.createExplosion(m.x, m.y, '#ff0000', game);
+                    this.detonateMine(m, game);
                 }
             }
         }
@@ -140,32 +138,47 @@ export class CollisionManager {
     }
 
     spawnPowerUp(x, y, game) {
-        const types = Object.keys(CONFIG.POWERUP.TYPES);
-        const type = types[Math.floor(Math.random() * types.length)];
-        game.powerups.push(new PowerUp(x, y, type));
+        const types = CONFIG.POWERUP.TYPES;
+        const totalWeight = Object.values(types).reduce((sum, t) => sum + (t.WEIGHT || 1), 0);
+        let r = Math.random() * totalWeight;
+
+        for (const [type, data] of Object.entries(types)) {
+            r -= (data.WEIGHT || 1);
+            if (r <= 0) {
+                game.powerups.push(new PowerUp(x, y, type));
+                return;
+            }
+        }
     }
 
     handlePowerUpCollection(p, ship) {
         const type = p.type;
+        const config = CONFIG.POWERUP.TYPES[type];
+        if (!config) return;
+
         if (type === 'HEALTH') {
-            ship.hp = Math.min(ship.hp + CONFIG.POWERUP.TYPES.HEALTH.HEAL_AMOUNT, ship.maxHp);
+            ship.hp = Math.min(ship.hp + config.HEAL_AMOUNT, ship.maxHp);
+            return;
+        }
+
+        // Standard logic for duration-based powerups
+        // Map types to ship properties (e.g. MULTISHOT -> multiShot, REAR_FIRE -> rearFire)
+        const propName = type.toLowerCase().replace(/([-_][a-z])/g, group => group.toUpperCase().replace('-', '').replace('_', ''));
+
+        if (ship[propName] !== undefined || ship[propName + 'Timer'] !== undefined) {
+            ship[propName] = true;
+            ship[propName + 'Timer'] = config.DURATION;
         } else {
-            const prop = type.toLowerCase() + 'Timer';
-            const activeProp = type.toLowerCase() + 'Active';
-            if (ship[prop] !== undefined) {
-                ship[prop] = CONFIG.POWERUP.TYPES[type].DURATION;
-                ship[activeProp === 'multishotActive' ? 'multiShot' : activeProp] = true;
-            } else if (type === 'MULTISHOT') {
+            // Fallback for types that might not follow the naming convention exactly
+            if (type === 'MULTISHOT') {
                 ship.multiShot = true;
-                ship.multiShotTimer = CONFIG.POWERUP.TYPES.MULTISHOT.DURATION;
+                ship.multiShotTimer = config.DURATION;
             } else if (type === 'INVULNERABILITY') {
                 ship.invulnerable = true;
-                ship.invulnerableTimer = CONFIG.POWERUP.TYPES.INVULNERABILITY.DURATION;
-            } else {
-                // Dynamic flag setter
-                const camelType = type.toLowerCase().replace(/([-_][a-z])/g, group => group.toUpperCase().replace('-', '').replace('_', ''));
-                ship[camelType] = true;
-                ship[camelType + 'Timer'] = CONFIG.POWERUP.TYPES[type].DURATION;
+                ship.invulnerableTimer = config.DURATION;
+            } else if (type === 'LASER') {
+                ship.laserActive = true;
+                ship.laserTimer = config.DURATION;
             }
         }
     }
@@ -175,17 +188,89 @@ export class CollisionManager {
         if (game.ship && game.ship.laserActive && game.input.isDown('Space')) {
             this.handleLaser(game);
         }
-        // Mines vs Asteroids
+        // Mines triggers
         for (const m of game.mines) {
-            if (m.isEnemy) continue; // Enemy mines don't hit asteroids (or maybe they do? Let's say no for now to save them for player)
+            if (m.markedForDeletion) continue;
+
+            const triggerRadius = CONFIG.MINE.TRIGGER_RADIUS;
+
+            // Asteroids trigger mines
             for (const a of game.asteroids) {
-                if (dist(m.x, m.y, a.x, a.y) < CONFIG.MINE.TRIGGER_RADIUS + a.radius) {
-                    m.markedForDeletion = true;
-                    a.hp -= CONFIG.MINE.DAMAGE;
-                    if (a.hp <= 0) a.markedForDeletion = true;
+                if (dist(m.x, m.y, a.x, a.y) < triggerRadius + a.radius) {
+                    this.detonateMine(m, game);
                     break;
                 }
             }
+            if (m.markedForDeletion) continue;
+
+            // UFOs trigger mines
+            for (const u of game.ufos) {
+                if (dist(m.x, m.y, u.x, u.y) < triggerRadius + u.radius) {
+                    this.detonateMine(m, game);
+                    break;
+                }
+            }
+            if (m.markedForDeletion) continue;
+
+            // Boss triggers mines
+            if (game.boss && dist(m.x, m.y, game.boss.x, game.boss.y) < triggerRadius + game.boss.radius) {
+                this.detonateMine(m, game);
+            }
+        }
+    }
+
+    detonateMine(mine, game) {
+        if (mine.markedForDeletion) return;
+        mine.markedForDeletion = true;
+
+        const blastRadius = CONFIG.MINE.BLAST_RADIUS;
+        const damage = CONFIG.MINE.DAMAGE;
+        const color = mine.isEnemy ? '#ff0000' : CONFIG.VISUALS.COLORS.MINE;
+
+        // Visual: Large Explosion
+        for (let i = 0; i < 40; i++) {
+            game.particles.push(new Particle(mine.x, mine.y, color, rand(100, 300), rand(0, Math.PI * 2), rand(0.8, 1.5)));
+        }
+        this.triggerShake();
+
+        // AOE Damage
+        // Damage Ship?
+        // Let's damage ship if it's within radius of ANY explosion for realism/danger
+        if (game.ship && !game.ship.invulnerable) {
+            if (dist(mine.x, mine.y, game.ship.x, game.ship.y) < blastRadius + game.ship.radius) {
+                game.ship.takeDamage(damage / 2); // Reduced damage for AOE compared to direct hit
+                this.triggerFlash();
+            }
+        }
+
+        // Damage Asteroids
+        game.asteroids.forEach(a => {
+            if (dist(mine.x, mine.y, a.x, a.y) < blastRadius + a.radius) {
+                a.hp -= damage;
+                if (a.hp <= 0 && !a.markedForDeletion) {
+                    a.markedForDeletion = true;
+                    game.credits += a.scoreValue || 20;
+                    this.createExplosion(a.x, a.y, CONFIG.VISUALS.COLORS.ASTEROID, game);
+                    this.splitAsteroid(a, game);
+                }
+            }
+        });
+
+        // Damage UFOs
+        game.ufos.forEach(u => {
+            if (dist(mine.x, mine.y, u.x, u.y) < blastRadius + u.radius) {
+                u.hp -= damage;
+                if (u.hp <= 0 && !u.markedForDeletion) {
+                    u.markedForDeletion = true;
+                    game.credits += u.scoreValue || 200;
+                    this.createExplosion(u.x, u.y, CONFIG.UFO.COLOR, game);
+                }
+            }
+        });
+
+        // Damage Boss
+        if (game.boss && dist(mine.x, mine.y, game.boss.x, game.boss.y) < blastRadius + game.boss.radius) {
+            game.boss.takeDamage(damage);
         }
     }
 
@@ -195,17 +280,34 @@ export class CollisionManager {
 
         const checkHit = (entity) => {
             if (!entity) return false;
+
+            // Distance check
+            const distToEntity = dist(game.ship.x, game.ship.y, entity.x, entity.y);
+            if (distToEntity > laserLength + entity.radius) return false;
+
+            // Projection check for intersection with a line segment (the laser)
+            // Normalized direction of laser
+            const lx = Math.cos(game.ship.angle);
+            const ly = Math.sin(game.ship.angle);
+
+            // Vector from ship to entity
             const dx = entity.x - game.ship.x;
             const dy = entity.y - game.ship.y;
-            const distToEntity = dist(game.ship.x, game.ship.y, entity.x, entity.y);
-            if (distToEntity > laserLength) return false;
 
-            const angleToEntity = Math.atan2(dy, dx);
-            let diff = angleToEntity - game.ship.angle;
-            while (diff > Math.PI) diff -= Math.PI * 2;
-            while (diff < -Math.PI) diff += Math.PI * 2;
+            // Dot product gives distance along laser line
+            const dot = dx * lx + dy * ly;
 
-            return Math.abs(diff) < 0.1; // Narrow beam
+            if (dot < 0 || dot > laserLength) return false;
+
+            // Closest point on the laser line to the entity center
+            const closestX = game.ship.x + lx * dot;
+            const closestY = game.ship.y + ly * dot;
+
+            // Distance from entity center to closest point on laser line
+            const d = dist(entity.x, entity.y, closestX, closestY);
+
+            // Hit if distance is less than entity radius + half laser width
+            return d < entity.radius + (CONFIG.POWERUP.TYPES.LASER.WIDTH * 2);
         };
 
         game.asteroids.forEach(a => {

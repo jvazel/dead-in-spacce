@@ -66,6 +66,8 @@ export class Ship extends Entity {
         this.afterburner = false;
         this.afterburnerTimer = 0;
         this.trailSpawnTimer = 0;
+        this.bounce = false;
+        this.bounceTimer = 0;
 
         // Upgrades
         this.drones = [];
@@ -178,6 +180,12 @@ export class Ship extends Entity {
                     game.trails.push(new TrailSegment(tx, ty, this.damage));
                 }
             }
+        }
+
+        // Bounce
+        if (this.bounce) {
+            this.bounceTimer -= dt;
+            if (this.bounceTimer <= 0) this.bounce = false;
         }
 
         // Shooting
@@ -305,7 +313,8 @@ export class Ship extends Entity {
                     this.homing ? CONFIG.POWERUP.TYPES.HOMING.COLOR :
                         this.piercing ? CONFIG.POWERUP.TYPES.PIERCING.COLOR :
                             CONFIG.VISUALS.COLORS.BULLET,
-                damage: this.damage // New
+                damage: this.damage,
+                bounce: this.bounce
             };
 
             if (this.multiShot) {

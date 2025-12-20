@@ -28,22 +28,33 @@ export class Drone extends Entity {
             let closest = null;
             let closestDist = CONFIG.DRONE.RANGE;
 
-            // Check asteroids
-            for (const a of asteroids) {
-                const d = dist(this.x, this.y, a.x, a.y);
+            // Priority 1: Boss
+            if (game.boss) {
+                const d = dist(this.x, this.y, game.boss.x, game.boss.y);
                 if (d < closestDist) {
                     closestDist = d;
-                    closest = a;
+                    closest = game.boss;
                 }
             }
 
-            // Check UFOs
-            if (game.ufos) {
+            // Priority 2: UFOs (only if no boss in range)
+            if (!closest && game.ufos) {
                 for (const u of game.ufos) {
                     const d = dist(this.x, this.y, u.x, u.y);
                     if (d < closestDist) {
                         closestDist = d;
                         closest = u;
+                    }
+                }
+            }
+
+            // Priority 3: Asteroids (only if no boss or UFO in range)
+            if (!closest) {
+                for (const a of asteroids) {
+                    const d = dist(this.x, this.y, a.x, a.y);
+                    if (d < closestDist) {
+                        closestDist = d;
+                        closest = a;
                     }
                 }
             }

@@ -1,5 +1,6 @@
 import { Entity } from './Entity.js';
 import { CONFIG } from '../config.js';
+import { CANVAS } from '../canvas.js';
 
 export class Bullet extends Entity {
     constructor(x, y, angle, properties = {}) {
@@ -17,6 +18,7 @@ export class Bullet extends Entity {
         this.piercing = properties.piercing || false;
         this.color = properties.color || CONFIG.VISUALS.COLORS.BULLET;
         this.damage = properties.damage || 10; // Default damage if not provided
+        this.bounce = properties.bounce || false;
 
         if (this.piercing) {
             this.hitCount = 0;
@@ -63,7 +65,23 @@ export class Bullet extends Entity {
         this.y += this.velY * dt;
         this.life -= dt;
         if (this.life <= 0) this.markedForDeletion = true;
-        super.update(dt);
+
+        if (this.bounce) {
+            if (this.x < 0 || this.x > CANVAS.width) {
+                this.velX *= -1;
+                this.angle = Math.atan2(this.velY, this.velX);
+                // Clamp to edges to prevent sticking
+                this.x = Math.max(0, Math.min(this.x, CANVAS.width));
+            }
+            if (this.y < 0 || this.y > CANVAS.height) {
+                this.velY *= -1;
+                this.angle = Math.atan2(this.velY, this.velX);
+                // Clamp to edges to prevent sticking
+                this.y = Math.max(0, Math.min(this.y, CANVAS.height));
+            }
+        } else {
+            super.update(dt);
+        }
     }
 
     draw(ctx) {

@@ -29,7 +29,8 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
 
 ### Ennemis et Obstacles
 - **OVNIs** : Apparaissent périodiquement, tirent sur le joueur et se déplacent avec un mouvement sinusoïdal.
-- **Trous Noirs** : Génèrent une force d'attraction sur tout ce qui les entoure (joueur, astéroïdes, projectiles). Attention à ne pas vous faire aspirer !
+- **Black Holes** : Génèrent une force d'attraction sur tout ce qui les entoure (joueur, astéroïdes, projectiles). Attention à ne pas vous faire aspirer !
+- **Mines** : Peuvent être posées par le joueur ou les boss. Elles possèdent une zone d'explosion (AOE) dévastatrice et sont déclenchées par la proximité de tout objet (astéroïdes, OVNIs, ou joueur).
 - **Astéroïdes** : Système de fragmentation (large → 2× medium → 2× small).
 
 ### Progression Rogue-lite
@@ -38,7 +39,17 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
     - **Dégâts** : Améliorez la puissance de chaque projectile.
     - **Cadence de Tir** : Réduisez le délai entre les tirs.
     - **Téléportation** : Débloquez la capacité de sauter dans l'espace (Flèche Bas).
-- **Power-ups Temporaires** : Récupérez des bonus sur les ennemis détruits (Multi-shot, Laser, Homing, Piercing, etc.).
+- **Power-ups Temporaires** : Récupérez des bonus orbes colorés sur les ennemis détruits. Chaque bonus a une couleur unique et un poids d'apparition spécifique :
+    - **Multi-shot** (Orange) : Tire plusieurs balles en éventail.
+    - **Laser** (Rouge orangé) : Un rayon continu haute précision qui traverse tout.
+    - **Homing** (Magenta) : Projectiles à tête chercheuse.
+    - **Piercing** (Vert Printemps) : Projectiles qui traversent plusieurs cibles.
+    - **Bouncing Bullets** (Bleu) : Les balles rebondissent sur les bords de l'écran.
+    - **Explosive** (Rouge) : Les impacts génèrent des micro-explosions.
+    - **Rear Fire** (Blanc) : Tire également vers l'arrière.
+    - **Afterburner** (Cyan) : Crée une traînée de feu destructrice derrière le vaisseau.
+    - **Invulnerability** (Jaune/Or) : Immunité temporaire aux dégâts.
+    - **Health** (Vert) : Restaure une partie des points de vie.
 
 ## 🎯 Contrôles
 
@@ -79,8 +90,8 @@ Définition du comportement individuel des objets :
 - **`Ship.js`** : Physique à inertie, gestion des armes et systèmes de survie du joueur.
 - **`UFO.js`** : Ennemi avec trajectoire sinusoïdale et tir ciblé.
 - **`BlackHole.js`** : Entité physique générant des forces d'attraction.
-- **`Drone.js`** : Allié orbital qui assiste le joueur.
-- **`Asteroid.js`**, **`Bullet.js`**, **`Mine.js`**, **`Particle.js`**, **`PowerUp.js`**.
+- **Drone.js** : Allié orbital qui assiste le joueur en ciblant prioritairement les menaces (Boss > UFO > Astéroïde).
+- **Asteroid.js**, **`Bullet.js`**, **`Mine.js`**, **`Particle.js`**, **`PowerUp.js`**.
 
 #### 📂 [js/ui/](file:///c:/Users/BL207380/Desktop/Projects/space-rock/js/ui)
 Composants d'interface complexes :

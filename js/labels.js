@@ -4,6 +4,7 @@ export const LABELS = {
     SHIELD: 'Bouclier',
     WAVE: 'Vague',
     CREDITS: 'Crédits',
+    MISSILES: 'Missiles',
 
     // Start Screen
     GAME_TITLE: 'DEAD IN SPACE',

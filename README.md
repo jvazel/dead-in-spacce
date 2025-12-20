@@ -38,8 +38,14 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
     - **PV & Bouclier** : Augmentez votre résistance maximale.
     - **Dégâts** : Améliorez la puissance de chaque projectile.
     - **Cadence de Tir** : Réduisez le délai entre les tirs.
-    - **Téléportation** : Débloquez la capacité de sauter dans l'espace (Flèche Bas).
-- **Power-ups Temporaires** : Récupérez des bonus orbes colorés sur les ennemis détruits. Chaque bonus a une couleur unique et un poids d'apparition spécifique :
+    - **Téléportation** : Débloqué avec l'amélioration "Téléportation" (Touche Bas).
+    - **Lance-Missiles** : Amélioration permanente permettant de tirer des missiles auto-guidés à zone d'effet dévastatrice.
+- **Améliorations In-Game (Rogue Cards)** : À la fin de chaque vague, choisissez parmi 3 bonus aléatoires :
+    - **Puissance & Cadence** : Augmente les dégâts ou réduit le délai entre les tirs.
+    - **PV & Bouclier** : Augmente votre résistance.
+    - **Ravitaillement Missiles** : Récupère instantanément +3 missiles.
+    - **Drones** : Ajoute un drone de soutien orbital.
+- **Power-ups Temporaires** : Récupérez des bonus orbes colorés sur les ennemis détruits :
     - **Multi-shot** (Orange) : Tire plusieurs balles en éventail.
     - **Laser** (Rouge orangé) : Un rayon continu haute précision qui traverse tout.
     - **Homing** (Magenta) : Projectiles à tête chercheuse.
@@ -56,6 +62,7 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
 - **Flèches directionnelles** : Déplacer et orienter le vaisseau.
 - **Flèche Bas** : Téléportation (si débloquée).
 - **Espace** : Tirer (balles normales, multi-tirs, ou laser selon les power-ups).
+- **Maj (Shift) ou X** : Lancer un missile (si débloqué et munitions disponibles).
 
 ## 📘 Manuel du Code
 
@@ -91,6 +98,7 @@ Définition du comportement individuel des objets :
 - **`UFO.js`** : Ennemi avec trajectoire sinusoïdale et tir ciblé.
 - **`BlackHole.js`** : Entité physique générant des forces d'attraction.
 - **Drone.js** : Allié orbital qui assiste le joueur en ciblant prioritairement les menaces (Boss > UFO > Astéroïde).
+- **Missile.js** : Projectile auto-guidé avec dégâts de zone (AOE).
 - **Asteroid.js**, **`Bullet.js`**, **`Mine.js`**, **`Particle.js`**, **`PowerUp.js`**.
 
 #### 📂 [js/ui/](file:///c:/Users/BL207380/Desktop/Projects/space-rock/js/ui)

@@ -9,7 +9,8 @@ export class SaveManager {
                 BASE_HP: 0,
                 BASE_SHIELD: 0,
                 TELEPORT: 0, // 0 = locked, 1 = unlocked
-                BASE_FIRE_RATE: 0
+                BASE_FIRE_RATE: 0,
+                MISSILE_LAUNCHER: 0
             }
         };
         // No load() needed for session-only persistence

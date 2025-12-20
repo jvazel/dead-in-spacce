@@ -3,6 +3,7 @@ import { Bullet } from './Bullet.js';
 import { Particle } from './Particle.js';
 import { Drone } from './Drone.js';
 import { Mine } from './Mine.js';
+import { Missile } from './Missile.js';
 import { TrailSegment } from './TrailSegment.js';
 import { CONFIG } from '../config.js';
 import { IMAGES } from '../Assets.js';
@@ -73,9 +74,13 @@ export class Ship extends Entity {
         this.drones = [];
         this.minesActive = false;
         this.mineTimer = 0;
-        this.drones = [];
-        this.minesActive = false;
-        this.mineTimer = 0;
+
+        // Missile System
+        const missileLevel = stats.missileLauncher || 0;
+        this.maxMissiles = missileLevel > 0 ? 1 + missileLevel : 0; // Level 1 (unlock) = 2, 2 = 3, etc.
+        this.missiles = this.maxMissiles;
+        this.lastMissileTime = 0;
+        this.missileCooldown = 0.5;
     }
 
     /**
@@ -191,6 +196,11 @@ export class Ship extends Entity {
         // Shooting
         if (input.isDown('Space')) {
             this.shoot(game);
+        }
+
+        // Missiles
+        if ((input.isDown('ShiftLeft') || input.isDown('ShiftRight')) && this.maxMissiles > 0) {
+            this.fireMissile(game);
         }
 
         // Drones
@@ -342,6 +352,26 @@ export class Ship extends Entity {
                 game.bullets.push(new Bullet(bx, by, rearAngle, { ...bulletProps, color: CONFIG.POWERUP.TYPES.REAR_FIRE.COLOR }));
             }
         }
+    }
+
+    fireMissile(game) {
+        const now = Date.now() / 1000;
+        if (this.missiles > 0 && now - this.lastMissileTime >= this.missileCooldown) {
+            this.missiles--;
+            this.lastMissileTime = now;
+
+            // Spawn missile at current angle
+            game.bullets.push(new Missile(this.x, this.y, this.angle, CONFIG.MISSILE.DAMAGE));
+
+            // Visual feedback
+            for (let i = 0; i < 5; i++) {
+                game.particles.push(new Particle(this.x, this.y, '#00ffff', 100, this.angle + Math.PI + (Math.random() - 0.5), 0.5));
+            }
+        }
+    }
+
+    addMissile(amount = 1) {
+        this.missiles = Math.min(this.missiles + amount, this.maxMissiles);
     }
 
     takeDamage(amount) {

@@ -9,7 +9,8 @@ export const UPGRADE_CONFIG = {
             DRONE_DAMAGE: 300,
             MULTISHOT_DURATION: 150,
             DRONE: 500,
-            MINE: 300
+            MINE: 300,
+            MISSILE: 400
         },
         REPAIR_AMOUNT: 25,
         MAX_HP_INCREASE: 20,
@@ -86,6 +87,14 @@ export const UPGRADE_CONFIG = {
                 TYPE: 'drone',
                 VALUE: 1,
                 WEIGHT: 0.5 // Rare
+            },
+            {
+                ID: 'MISSILE_REFILL',
+                LABEL: 'Ravitaillement Missiles',
+                DESCRIPTION: 'Récupère +3 missiles de façon instantanée.',
+                TYPE: 'missileRefill',
+                VALUE: 3,
+                WEIGHT: 0.8
             }
         ]
     },
@@ -127,6 +136,14 @@ export const UPGRADE_CONFIG = {
             INCREMENT: 0.02, // Reduces delay by 0.02s
             MAX_LEVEL: 10,
             DESCRIPTION: 'Augmente la cadence de tir (Réduit le délai de 0.02s).'
+        },
+        MISSILE_LAUNCHER: {
+            LABEL: 'Lance-Missiles',
+            COST: 400,
+            COST_SCALING: 1.8,
+            INCREMENT: 1, // +1 capacity per level after unlock
+            MAX_LEVEL: 5,
+            DESCRIPTION: 'Débloque des missiles auto-guidés (Touche Maj). Capacité initiale : 2 missiles.'
         }
     }
 };

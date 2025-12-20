@@ -19,6 +19,15 @@ export const ENTITY_CONFIG = {
         LIFE: 1.5,
         RADIUS: 2
     },
+    MISSILE: {
+        SPEED: 350,
+        LIFE: 5,
+        RADIUS: 4,
+        DAMAGE: 200,
+        BLAST_RADIUS: 150,
+        TURN_SPEED: 4,
+        DETECTION_RADIUS: 800
+    },
     ASTEROID: {
         LARGE: { RADIUS: 40, SPEED: 50 },
         MEDIUM: { RADIUS: 20, SPEED: 100 },

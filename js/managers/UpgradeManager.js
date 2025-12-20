@@ -66,6 +66,9 @@ export class UpgradeManager {
             case 'drone':
                 game.ship.addDrone();
                 break;
+            case 'missileRefill':
+                game.ship.addMissile(upgrade.VALUE);
+                break;
         }
 
         game.nextWave();

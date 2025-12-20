@@ -3,6 +3,7 @@ import { CONFIG } from '../config.js';
 import { Particle } from '../entities/Particle.js';
 import { Asteroid } from '../entities/Asteroid.js';
 import { PowerUp } from '../entities/PowerUp.js';
+import { Missile } from '../entities/Missile.js';
 
 export class CollisionManager {
     constructor() {
@@ -19,26 +20,42 @@ export class CollisionManager {
                     this.triggerShake();
                 }
             } else {
-                // Player Bullet vs Asteroids
+                // Player Bullet/Missile vs Asteroids
                 for (const a of game.asteroids) {
                     if (checkCircleCollision(b, a)) {
-                        this.handleAsteroidHit(b, a, game);
+                        if (b instanceof Missile) {
+                            this.detonateMissile(b, game);
+                        } else {
+                            this.handleAsteroidHit(b, a, game);
+                        }
                         break;
                     }
                 }
 
-                // Player Bullet vs UFO
+                if (b.markedForDeletion) continue;
+
+                // Player Bullet/Missile vs UFO
                 for (const u of game.ufos) {
                     if (checkCircleCollision(b, u)) {
-                        this.handleUFOHit(b, u, game);
+                        if (b instanceof Missile) {
+                            this.detonateMissile(b, game);
+                        } else {
+                            this.handleUFOHit(b, u, game);
+                        }
                         break;
                     }
                 }
 
-                // Player Bullet vs Boss
+                if (b.markedForDeletion) continue;
+
+                // Player Bullet/Missile vs Boss
                 if (game.boss && checkCircleCollision(b, game.boss)) {
-                    b.markedForDeletion = true;
-                    game.boss.takeDamage(b.damage);
+                    if (b instanceof Missile) {
+                        this.detonateMissile(b, game);
+                    } else {
+                        b.markedForDeletion = true;
+                        game.boss.takeDamage(b.damage);
+                    }
                 }
             }
         }
@@ -114,6 +131,7 @@ export class CollisionManager {
         if (ufo.hp <= 0) {
             ufo.markedForDeletion = true;
             game.credits += ufo.scoreValue || 200;
+            if (game.ship) game.ship.addMissile(1);
             this.createExplosion(ufo.x, ufo.y, CONFIG.UFO.COLOR, game);
             if (Math.random() < CONFIG.UFO.DROP_CHANCE) {
                 this.spawnPowerUp(ufo.x, ufo.y, game);
@@ -350,5 +368,50 @@ export class CollisionManager {
         flash.classList.remove('flash-active');
         void flash.offsetWidth;
         flash.classList.add('flash-active');
+    }
+
+    detonateMissile(missile, game) {
+        if (missile.markedForDeletion) return;
+        missile.markedForDeletion = true;
+
+        const blastRadius = CONFIG.MISSILE.BLAST_RADIUS;
+        const damage = CONFIG.MISSILE.DAMAGE;
+        const color = '#00ffff'; // Missile Cyan Glow
+
+        // Visual: Massive Explosion
+        for (let i = 0; i < 60; i++) {
+            game.particles.push(new Particle(missile.x, missile.y, color, rand(150, 400), rand(0, Math.PI * 2), rand(1.0, 2.0)));
+        }
+        this.triggerShake();
+
+        // AOE Damage - Asteroids
+        game.asteroids.forEach(a => {
+            if (dist(missile.x, missile.y, a.x, a.y) < blastRadius + a.radius) {
+                a.hp -= damage;
+                if (a.hp <= 0 && !a.markedForDeletion) {
+                    a.markedForDeletion = true;
+                    game.credits += a.scoreValue || 20;
+                    this.createExplosion(a.x, a.y, CONFIG.VISUALS.COLORS.ASTEROID, game);
+                    this.splitAsteroid(a, game);
+                }
+            }
+        });
+
+        // AOE Damage - UFOs
+        game.ufos.forEach(u => {
+            if (dist(missile.x, missile.y, u.x, u.y) < blastRadius + u.radius) {
+                u.hp -= damage;
+                if (u.hp <= 0 && !u.markedForDeletion) {
+                    u.markedForDeletion = true;
+                    game.credits += u.scoreValue || 200;
+                    this.createExplosion(u.x, u.y, CONFIG.UFO.COLOR, game);
+                }
+            }
+        });
+
+        // AOE Damage - Boss
+        if (game.boss && dist(missile.x, missile.y, game.boss.x, game.boss.y) < blastRadius + game.boss.radius) {
+            game.boss.takeDamage(damage);
+        }
     }
 }

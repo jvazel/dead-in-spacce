@@ -15,6 +15,15 @@ export class UIManager {
 
             document.getElementById('hud-hp-text').innerText = `${Math.ceil(game.ship.hp)}/${Math.ceil(game.ship.maxHp)}`;
             document.getElementById('hud-shield-text').innerText = Math.ceil(game.ship.shield);
+
+            // Missile HUD
+            const missileHUD = document.getElementById('hud-missiles');
+            if (game.ship.maxMissiles > 0) {
+                missileHUD.style.display = 'block';
+                document.getElementById('hud-missile-count').innerText = game.ship.missiles;
+            } else {
+                missileHUD.style.display = 'none';
+            }
         }
         document.getElementById('hud-wave').innerText = game.wave;
         document.getElementById('hud-credits').innerText = game.credits;

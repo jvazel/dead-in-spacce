@@ -94,7 +94,8 @@ export class Game {
             hp: CONFIG.PERMANENT_UPGRADES.BASE_HP.INCREMENT * this.saveManager.getUpgradeLevel('BASE_HP'),
             shield: CONFIG.PERMANENT_UPGRADES.BASE_SHIELD.INCREMENT * this.saveManager.getUpgradeLevel('BASE_SHIELD'),
             fireRate: CONFIG.PERMANENT_UPGRADES.BASE_FIRE_RATE.INCREMENT * this.saveManager.getUpgradeLevel('BASE_FIRE_RATE'),
-            teleport: this.saveManager.getUpgradeLevel('TELEPORT') > 0
+            teleport: this.saveManager.getUpgradeLevel('TELEPORT') > 0,
+            missileLauncher: this.saveManager.getUpgradeLevel('MISSILE_LAUNCHER')
         };
 
         this.ship = new Ship(CANVAS.width / 2, CANVAS.height / 2, shipConfig);
@@ -146,6 +147,7 @@ export class Game {
 
     // Called by UpgradeManager
     nextWave() {
+        if (this.ship) this.ship.addMissile(1); // +1 Missile per wave
         this.waveManager.nextWave(this);
     }
 

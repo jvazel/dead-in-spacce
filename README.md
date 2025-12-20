@@ -21,9 +21,11 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
 ## 🎮 Fonctionnalités
 
 ### Système de Boss
-- **Vagues de Boss** : Un boss imposant apparaît toutes les 4 vagues.
-- **Phases de Combat** : Le boss alterne entre deux phases d'attaque (Tir circulaire en spirale et Salve ciblée).
-- **IA Évolutive** : Le boss se déplace vers le joueur et sa difficulté augmente avec les vagues.
+- **Vagues de Boss** : Un boss imposant apparaît toutes les 2 vagues (configurable).
+- **Variété de Boss** : Le jeu alterne entre différents types de boss pour varier le gameplay :
+    - **Boss Alpha** : Utilise des tirs circulaires en spirale et des salves ciblées.
+    - **Boss Beta** : Utilise des tirs triples (tri-shot) et pose des mines explosives.
+- **IA Évolutive** : Chaque boss possède ses propres patterns de mouvement et sa difficulté augmente avec les vagues.
 
 ### Ennemis et Obstacles
 - **OVNIs** : Apparaissent périodiquement, tirent sur le joueur et se déplacent avec un mouvement sinusoïdal.
@@ -50,7 +52,8 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
 Le code est organisé en modules ES6 pour séparer les données, la logique système et les objets de jeu.
 
 #### 📂 [assets/](file:///c:/Users/BL207380/Desktop/Projects/space-rock/assets)
-Contient toutes les ressources graphiques du jeu (fichiers PNG) : `ship.png`, `boss.png`, `ufo.png`, `black_hole.png`, etc.
+Contient toutes les ressources graphiques du jeu (fichiers PNG) : `ship.png`, `ufo.png`, `black_hole.png`, etc.
+- **📂 [bosses/](file:///c:/Users/BL207380/Desktop/Projects/space-rock/assets/bosses)** : Assets spécifiques aux boss (`boss_alpha.png`, `boss_beta.png`).
 
 #### 📂 [js/config/](file:///c:/Users/BL207380/Desktop/Projects/space-rock/js/config)
 Centralise tous les paramètres du jeu pour un équilibrage facile :
@@ -69,8 +72,11 @@ Cerveaux logiques qui traitent les interactions entre entités :
 
 #### 📂 [js/entities/](file:///c:/Users/BL207380/Desktop/Projects/space-rock/js/entities)
 Définition du comportement individuel des objets :
+- **📂 [bosses/](file:///c:/Users/BL207380/Desktop/Projects/space-rock/js/entities/bosses)** : Système de boss modulaire.
+    - **`BossBase.js`** : Classe de base abstraite gérant les PV et l'affichage commun.
+    - **`BossAlpha.js`** : Implémentation du premier boss.
+    - **`BossBeta.js`** : Implémentation du second boss avec mines et tri-shot.
 - **`Ship.js`** : Physique à inertie, gestion des armes et systèmes de survie du joueur.
-- **`Boss.js`** : Système d'états avec plusieurs phases d'attaque (`spiral`, `burst`).
 - **`UFO.js`** : Ennemi avec trajectoire sinusoïdale et tir ciblé.
 - **`BlackHole.js`** : Entité physique générant des forces d'attraction.
 - **`Drone.js`** : Allié orbital qui assiste le joueur.

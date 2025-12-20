@@ -10,4 +10,6 @@ IMAGES.ship.src = 'assets/ship.png';
 IMAGES.orb.src = 'assets/orb.png';
 IMAGES.black_hole.src = 'assets/black_hole.png';
 IMAGES.ufo.src = 'assets/ufo.png';
-IMAGES.boss.src = 'assets/boss.png';
+IMAGES.boss.src = 'assets/bosses/boss_alpha.png';
+IMAGES.boss_beta = new Image();
+IMAGES.boss_beta.src = 'assets/bosses/boss_beta.png';

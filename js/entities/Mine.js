@@ -2,10 +2,11 @@ import { Entity } from './Entity.js';
 import { CONFIG } from '../config.js';
 
 export class Mine extends Entity {
-    constructor(x, y) {
+    constructor(x, y, isEnemy = false) {
         super(x, y, CONFIG.MINE.RADIUS);
         this.timer = 0;
         this.blinkState = false;
+        this.isEnemy = isEnemy;
     }
 
     update(dt) {
@@ -27,7 +28,7 @@ export class Mine extends Entity {
         ctx.beginPath();
         ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = '#333';
-        ctx.strokeStyle = CONFIG.VISUALS.COLORS.MINE;
+        ctx.strokeStyle = this.isEnemy ? '#ff0000' : CONFIG.VISUALS.COLORS.MINE;
         ctx.lineWidth = 2;
         ctx.fill();
         ctx.stroke();
@@ -45,9 +46,9 @@ export class Mine extends Entity {
         if (this.blinkState) {
             ctx.beginPath();
             ctx.arc(0, 0, 3, 0, Math.PI * 2);
-            ctx.fillStyle = CONFIG.VISUALS.COLORS.MINE;
+            ctx.fillStyle = this.isEnemy ? '#ff0000' : CONFIG.VISUALS.COLORS.MINE;
             ctx.shadowBlur = 10;
-            ctx.shadowColor = CONFIG.VISUALS.COLORS.MINE;
+            ctx.shadowColor = this.isEnemy ? '#ff0000' : CONFIG.VISUALS.COLORS.MINE;
             ctx.fill();
         }
 

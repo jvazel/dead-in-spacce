@@ -101,6 +101,14 @@ export class Game {
         this.bullets = [];
         this.asteroids = [];
         this.powerups = [];
+        this.ufos = [];
+        this.ufoTimer = 0;
+        this.mines = [];
+        this.blackHoles = [];
+        this.blackHoleTimer = 0;
+        this.boss = null;
+        this.particles = [];
+        this.trails = [];
 
         // Reset legacy costs if needed
         this.costs = { ...CONFIG.SHOP.COSTS };

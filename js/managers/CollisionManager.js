@@ -66,6 +66,15 @@ export class CollisionManager {
             if (game.boss && checkCircleCollision(game.ship, game.boss)) {
                 game.ship.takeDamage(CONFIG.SHIP.COLLISION_DAMAGE);
             }
+
+            // Ship vs Enemy Mines
+            for (const m of game.mines) {
+                if (m.isEnemy && checkCircleCollision(game.ship, m)) {
+                    game.ship.takeDamage(CONFIG.MINE.DAMAGE || 20);
+                    m.markedForDeletion = true;
+                    this.createExplosion(m.x, m.y, '#ff0000', game);
+                }
+            }
         }
 
         // --- Ship vs PowerUp ---
@@ -168,6 +177,7 @@ export class CollisionManager {
         }
         // Mines vs Asteroids
         for (const m of game.mines) {
+            if (m.isEnemy) continue; // Enemy mines don't hit asteroids (or maybe they do? Let's say no for now to save them for player)
             for (const a of game.asteroids) {
                 if (dist(m.x, m.y, a.x, a.y) < CONFIG.MINE.TRIGGER_RADIUS + a.radius) {
                     m.markedForDeletion = true;

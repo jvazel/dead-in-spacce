@@ -102,5 +102,27 @@ export const ENTITY_CONFIG = {
         COLOR: '#ff0000',
         GLOW_COLOR: '#ff3333',
         SCORE: 1000
+    },
+    HAZARDS: {
+        NEBULA_CLOUD: {
+            RADIUS_MIN: 150,
+            RADIUS_MAX: 300,
+            SPEED_MULTIPLIER: 0.6,
+            SHIELD_REGEN_MULTIPLIER: 10,
+            COLOR: 'rgba(100, 0, 255, 0.15)', // Purple haze
+            SPAWN_INTERVAL: 45
+        },
+        TIME_ANOMALY: {
+            RADIUS: 120,
+            TIME_SCALE: 0.3,
+            COLOR: 'rgba(0, 255, 255, 0.2)',
+            SPAWN_INTERVAL: 60,
+            DURATION: 15
+        },
+        SOLAR_STORM: {
+            CHANCE: 0.1, // per wave start
+            DURATION: 10,
+            COLOR: 'rgba(255, 100, 0, 0.2)'
+        }
     }
 };

@@ -34,6 +34,12 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
 - **Mines** : Peuvent être posées par le joueur ou les boss. Elles possèdent une zone d'explosion (AOE) dévastatrice et sont déclenchées par la proximité de tout objet (astéroïdes, OVNIs, ou joueur).
 - **Astéroïdes** : Système de fragmentation (large → 2× medium → 2× small).
 
+### Environnement Interactif (Hazards)
+- **Nébuleuses** : Zones de gaz coloré qui ralentissent votre vitesse mais rechargent instantanément votre bouclier. Utilisez-les comme abris !
+- **Anomalies Temporelles** : Bulles de distorsion qui ralentissent le temps. Elles affectent tout : votre vaisseau, les projectiles et les astéroïdes.
+- **Tempêtes Solaires** : Événements imprévisibles qui inversent vos commandes et brouillent l'affichage. Restez concentré !
+
+
 ### Progression Rogue-lite
 - **Améliorations Permanentes** : Dépensez vos crédits dans le menu Game Over pour améliorer votre vaisseau de façon persistante. Chaque amélioration dispose d'une **icône néon dédiée** :
     - **PV & Bouclier** : Augmentez votre résistance maximale.
@@ -133,4 +139,6 @@ Composants d'interface complexes :
 - **Système de Dégâts Unifié** : Architecture harmonisée utilisant une méthode `takeDamage` pour toutes les entités destructibles, simplifiant la maintenance et assurant un comportement cohérent des projectiles et du laser.
 - **Calibrage Laser (DPS)** : Le laser utilise désormais un calcul basé sur le temps réel (`dt`), garantissant une puissance équilibrée indépendamment du taux de rafraîchissement de l'écran (60Hz, 144Hz, etc.).
 - **Système de Surcharge (Heat)** : Implémentation d'une gestion de chaleur pour le vaisseau. Introduit une couche de stratégie (Risk-Reward) où le joueur peut infliger +50% de dégâts en restant proche de la limite de surchauffe.
+- **Dangers Environnementaux** : Système extensible d'aléas (`EnvironmentManager`) utilisant des propriétés de `timeScale` individuelles pour simuler des distorsions temporelles locales.
 - **Performance** : Réduction du nombre d'itérations dans le gestionnaire de collisions grâce à l'unification des boucles de détection.
+

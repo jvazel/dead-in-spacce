@@ -9,6 +9,7 @@ export class Entity {
     }
 
     update(dt) {
+        dt *= (this.timeScale || 1.0);
         // Screen Wrap
         if (this.x < -this.radius) this.x = CANVAS.width + this.radius;
         if (this.x > CANVAS.width + this.radius) this.x = -this.radius;

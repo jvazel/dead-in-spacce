@@ -12,6 +12,7 @@ import { CollisionManager } from './managers/CollisionManager.js';
 import { UpgradeManager } from './managers/UpgradeManager.js';
 import { UIManager } from './managers/UIManager.js';
 import { WaveManager } from './managers/WaveManager.js';
+import { EnvironmentManager } from './managers/EnvironmentManager.js';
 import { SaveManager } from './managers/SaveManager.js';
 import { GameOverScreen } from './ui/GameOverScreen.js';
 
@@ -42,6 +43,9 @@ export class Game {
         this.trails = [];
         this.boss = null;
         this.particles = [];
+        this.nebulaClouds = [];
+        this.timeAnomalies = [];
+        this.solarStormTimer = 0;
         this.background = new Background();
 
         // Managers
@@ -49,6 +53,7 @@ export class Game {
         this.upgradeManager = new UpgradeManager();
         this.uiManager = new UIManager();
         this.waveManager = new WaveManager();
+        this.environmentManager = new EnvironmentManager();
         this.saveManager = new SaveManager();
         this.gameOverScreen = new GameOverScreen(this.saveManager);
 
@@ -169,6 +174,15 @@ export class Game {
             }
         }
 
+        // Apply Solar Storm Effect (CSS Blur)
+        if (this.solarStormTimer > 0) {
+            CANVAS.style.filter = 'blur(2px) hue-rotate(90deg)';
+            if (this.ship) this.ship.inputMultiplier = -1;
+        } else {
+            CANVAS.style.filter = '';
+            if (this.ship) this.ship.inputMultiplier = 1;
+        }
+
         requestAnimationFrame(t => this.loop(t));
     }
 
@@ -191,6 +205,13 @@ export class Game {
         this.mines.forEach(m => m.update(dt));
         this.trails.forEach(t => t.update(dt));
         this.particles.forEach(p => p.update(dt));
+
+        this.environmentManager.update(dt, this);
+
+        if (this.solarStormTimer > 0) {
+            this.solarStormTimer -= dt;
+        }
+
         this.updateUFOs(dt);
         this.ufos.forEach(u => u.update(dt, this));
         if (this.boss) this.boss.update(dt, this);
@@ -317,6 +338,9 @@ export class Game {
         this.asteroids.forEach(a => a.draw(CTX));
         this.bullets.forEach(b => b.draw(CTX));
         if (this.boss) this.boss.draw(CTX);
+
+        this.environmentManager.draw(CTX, this);
+
         if (this.ship) this.ship.draw(CTX, this.input);
     }
 

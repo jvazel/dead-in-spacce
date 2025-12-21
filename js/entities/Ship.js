@@ -87,6 +87,11 @@ export class Ship extends Entity {
         this.heat = 0;
         this.overheated = false;
         this.overheatTimer = 0;
+
+        // Environmental Multipliers
+        this.engineMultiplier = 1.0;
+        this.inputMultiplier = 1.0;
+        this.inNebula = false;
     }
 
     /**
@@ -96,9 +101,10 @@ export class Ship extends Entity {
      * @param {Game} game - Game reference for spawning entities
      */
     update(dt, input, game) {
+        dt *= (this.timeScale || 1.0);
         // Rotation
-        if (input.isDown('ArrowLeft')) this.angle -= this.rotationSpeed * dt;
-        if (input.isDown('ArrowRight')) this.angle += this.rotationSpeed * dt;
+        if (input.isDown('ArrowLeft')) this.angle -= this.rotationSpeed * this.inputMultiplier * dt;
+        if (input.isDown('ArrowRight')) this.angle += this.rotationSpeed * this.inputMultiplier * dt;
 
         // Teleport
         if (this.canTeleport && input.isDown('ArrowDown')) {
@@ -108,8 +114,9 @@ export class Ship extends Entity {
 
         // Thrust
         if (input.isDown('ArrowUp')) {
-            this.velX += Math.cos(this.angle) * this.thrust * dt;
-            this.velY += Math.sin(this.angle) * this.thrust * dt;
+            const thrustForce = this.thrust * this.engineMultiplier;
+            this.velX += Math.cos(this.angle) * thrustForce * dt;
+            this.velY += Math.sin(this.angle) * thrustForce * dt;
 
             // Thruster Particles
             if (Math.random() < 0.5) {
@@ -130,7 +137,8 @@ export class Ship extends Entity {
 
         // Shield Regen
         if (this.maxShield > 0 && this.shield < this.maxShield) {
-            this.shield += CONFIG.SHIP.SHIELD_REGEN_RATE * dt;
+            const regenRate = CONFIG.SHIP.SHIELD_REGEN_RATE * (this.inNebula ? CONFIG.HAZARDS.NEBULA_CLOUD.SHIELD_REGEN_MULTIPLIER : 1);
+            this.shield += regenRate * dt;
             if (this.shield > this.maxShield) this.shield = this.maxShield;
         }
 

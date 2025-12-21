@@ -217,6 +217,9 @@ export class CollisionManager {
     }
 
     checkSpecialistCollisions(game, dt) {
+        // Environmental Hazards
+        this.checkHazardInteractions(game);
+
         // Laser
         if (game.ship && game.ship.laserActive && game.input.isDown('Space')) {
             this.handleLaser(game, dt);
@@ -414,6 +417,45 @@ export class CollisionManager {
                 if (count >= 3) break;
             }
         }
+    }
+
+    handleLaser(game, dt) {
+        // ... previous code ...
+    }
+
+    checkHazardInteractions(game) {
+        if (!game.ship) return;
+
+        // Nebula Cloud Interactions
+        game.ship.inNebula = false;
+        game.ship.engineMultiplier = 1.0;
+
+        game.nebulaClouds.forEach(n => {
+            if (dist(game.ship.x, game.ship.y, n.x, n.y) < n.radius) {
+                game.ship.inNebula = true;
+                game.ship.engineMultiplier = CONFIG.HAZARDS.NEBULA_CLOUD.SPEED_MULTIPLIER;
+            }
+        });
+
+        // Time Anomaly Interactions
+        const allEntities = [
+            this.game?.ship,
+            ...(this.game?.asteroids || []),
+            ...(this.game?.bullets || []),
+            ...(this.game?.ufos || []),
+            ...(this.game?.particles || []),
+            this.game?.boss
+        ].filter(Boolean);
+
+        allEntities.forEach(e => {
+            e.timeScale = 1.0; // Reset
+            game.timeAnomalies.forEach(a => {
+                const distance = dist(e.x, e.y, a.x, a.y);
+                if (distance < a.radius) {
+                    e.timeScale = a.timeScale;
+                }
+            });
+        });
     }
 
     triggerShake() {

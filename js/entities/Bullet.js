@@ -27,6 +27,7 @@ export class Bullet extends Entity {
     }
 
     update(dt, asteroids = []) {
+        dt *= (this.timeScale || 1.0);
         if (this.homing) {
             let closest = null;
             let closestDist = CONFIG.POWERUP.TYPES.HOMING.DETECTION_RADIUS;

@@ -28,6 +28,7 @@ export class UFO extends Entity {
     }
 
     update(dt, game) {
+        dt *= (this.timeScale || 1.0);
         this.timeAlive += dt;
 
         // Move

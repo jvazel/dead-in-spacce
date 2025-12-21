@@ -15,9 +15,23 @@ export class CollisionManager {
             if (b.enemy) {
                 // Enemy Bullet vs Ship
                 if (game.ship && !game.ship.invulnerable && checkCircleCollision(b, game.ship)) {
-                    game.ship.takeDamage(b.damage || 10);
-                    b.markedForDeletion = true;
-                    this.triggerShake();
+                    if (game.ship.parryActive) {
+                        // Parry/Reflect logic
+                        b.enemy = false;
+                        b.vx = -b.vx * 1.5; // Reflect and speed up slightly
+                        b.vy = -b.vy * 1.5;
+                        b.life = CONFIG.BULLET.LIFE; // Reset life
+                        b.damage = (b.damage || 10) * 2; // Double damage for reflected bullets
+
+                        // Create sparks
+                        for (let i = 0; i < 5; i++) {
+                            game.particles.push(new Particle(b.x, b.y, '#0ff', 2));
+                        }
+                    } else {
+                        game.ship.takeDamage(b.damage || 10);
+                        b.markedForDeletion = true;
+                        this.triggerShake();
+                    }
                 }
             } else {
                 // Player Bullet/Missile vs Asteroids

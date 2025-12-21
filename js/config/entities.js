@@ -20,6 +20,10 @@ export const ENTITY_CONFIG = {
             OVERHEAT_DURATION: 3.0, // seconds of lockout
             DAMAGE_BONUS_THRESHOLD: 70, // Start bonus at 70% heat
             DAMAGE_BONUS_MAX: 1.5 // Max 50% bonus at 100% heat
+        },
+        PARRY: {
+            DURATION: 0.5,
+            COOLDOWN: 2.0
         }
     },
     VESSELS: {

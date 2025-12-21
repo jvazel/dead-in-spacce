@@ -1,0 +1,386 @@
+/* Permanent Shop & Vessel Selection */
+.shop-section {
+    margin-top: 20px;
+    border-top: 1px solid #444;
+    padding-top: 10px;
+}
+
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 10px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.shop-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.shop-grid::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.shop-grid::-webkit-scrollbar-thumb {
+    background: #0ff;
+    border-radius: 3px;
+}
+
+.shop-card {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #444;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.shop-card:hover {
+    border-color: #0ff;
+    background: rgba(0, 50, 50, 0.5);
+}
+
+.shop-card h3 {
+    margin: 5px 0;
+    color: #0ff;
+    font-size: 16px;
+}
+
+.shop-card .desc {
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 10px;
+    height: 30px;
+    overflow: hidden;
+}
+
+.shop-card .stats {
+    font-size: 12px;
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.shop-card button {
+    width: 100%;
+    padding: 5px;
+    font-size: 14px;
+    margin: 0;
+    background: #004400;
+    border-color: #0f0;
+}
+
+.shop-card button:hover {
+    background: #006600;
+}
+
+.shop-card button:disabled {
+    background: #222;
+    border-color: #444;
+    color: #666;
+    cursor: default;
+}
+
+.shop-card.locked button {
+    background: #440000;
+    border-color: #f00;
+}
+
+.shop-card.unlocked {
+    border-color: #0f0;
+}
+
+.shop-card.unlocked button {
+    background: #222;
+    color: #0f0;
+    border: none;
+    cursor: default;
+}
+
+/* Tab System */
+.tabs-nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+    padding-bottom: 10px;
+}
+
+.tab-btn {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+.tab-btn:hover {
+    background: rgba(0, 255, 255, 0.2);
+    border-color: #0ff;
+}
+
+.tab-btn.active {
+    background: #0ff;
+    color: #000;
+    border-color: #0ff;
+    box-shadow: 0 0 10px #0ff;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Neon Icons System */
+.upgrade-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.upgrade-icon::before,
+.upgrade-icon::after {
+    content: '';
+    position: absolute;
+    box-sizing: border-box;
+}
+
+.icon-damage::before,
+.icon-BASE_DAMAGE::before {
+    width: 40px;
+    height: 4px;
+    background: #f0f;
+    transform: rotate(45deg);
+    box-shadow: 0 0 10px #f0f;
+}
+
+.icon-damage::after,
+.icon-BASE_DAMAGE::after {
+    width: 40px;
+    height: 4px;
+    background: #f0f;
+    transform: rotate(-45deg);
+    box-shadow: 0 0 10px #f0f;
+}
+
+.icon-fireRateDelay::before,
+.icon-BASE_FIRE_RATE::before {
+    width: 35px;
+    height: 35px;
+    border: 3px solid #ff0;
+    border-radius: 50%;
+    border-top-color: transparent;
+    box-shadow: 0 0 10px #ff0;
+    animation: rotate 2s linear infinite;
+}
+
+.icon-maxHp::before,
+.icon-BASE_HP::before {
+    width: 30px;
+    height: 30px;
+    background: #0f0;
+    transform: rotate(45deg);
+    box-shadow: 0 0 10px #0f0;
+}
+
+.icon-maxShield::before,
+.icon-BASE_SHIELD::before {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #0ff;
+    border-radius: 50%;
+    box-shadow: 0 0 15px #0ff;
+}
+
+.icon-maxShield::after {
+    width: 25px;
+    height: 25px;
+    border: 1px solid #0ff;
+    border-radius: 50%;
+}
+
+.icon-multiShotDuration::before {
+    width: 6px;
+    height: 20px;
+    background: #f80;
+    box-shadow: -12px 0 10px #f80, 0 0 10px #f80, 12px 0 10px #f80;
+}
+
+.icon-drone::before {
+    width: 30px;
+    height: 15px;
+    border: 2px solid #aaa;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #fff;
+}
+
+.icon-drone::after {
+    width: 6px;
+    height: 6px;
+    background: #f00;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #f00;
+    animation: blink 1s step-end infinite;
+}
+
+.icon-droneDamage::before {
+    width: 30px;
+    height: 15px;
+    border: 2px solid #f00;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #f00;
+}
+
+.icon-hp::before {
+    width: 30px;
+    height: 8px;
+    background: #0f0;
+    box-shadow: 0 0 10px #0f0;
+}
+
+.icon-hp::after {
+    width: 8px;
+    height: 30px;
+    background: #0f0;
+    box-shadow: 0 0 10px #0f0;
+}
+
+.icon-missileRefill::before {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 30px solid #0ff;
+    filter: drop-shadow(0 0 5px #0ff);
+}
+
+.icon-powerupDuration::before {
+    width: 20px;
+    height: 30px;
+    border: 2px solid #ff0;
+    clip-path: polygon(0% 0%, 100% 0%, 50% 50%, 100% 100%, 0% 100%, 50% 50%);
+    box-shadow: 0 0 10px #ff0;
+}
+
+.icon-TELEPORT::before {
+    width: 40px;
+    height: 20px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 15px #fff;
+    animation: pulse 2.5s ease-in-out infinite;
+}
+
+.icon-TELEPORT::after {
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+}
+
+.icon-MISSILE_LAUNCHER::before {
+    width: 15px;
+    height: 35px;
+    background: #0ff;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 100%, 0% 100%, 0% 25%);
+    box-shadow: 0 0 15px #0ff;
+}
+
+/* Vessel Selection */
+.vessel-card.selected {
+    border-color: #0ff;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    background: rgba(0, 255, 255, 0.1);
+}
+
+.vessel-preview {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 15px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.vessel-preview::before,
+.vessel-preview::after {
+    content: '';
+    position: absolute;
+}
+
+.icon-SHIP::before {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 25px solid #fff;
+    filter: drop-shadow(0 0 8px #fff);
+}
+
+.icon-INTERCEPTOR::before {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 35px solid #0ff;
+    filter: drop-shadow(0 0 10px #0ff);
+}
+
+.icon-INTERCEPTOR::after {
+    width: 40px;
+    height: 2px;
+    background: #0ff;
+    top: 60%;
+    box-shadow: 0 0 10px #0ff;
+}
+
+.icon-TANK::before {
+    width: 35px;
+    height: 35px;
+    border: 3px solid #f00;
+    background: rgba(255, 0, 0, 0.2);
+    box-shadow: 0 0 15px #f00;
+}
+
+.icon-TANK::after {
+    width: 15px;
+    height: 15px;
+    background: #f00;
+    box-shadow: 0 0 8px #f00;
+}
+
+.icon-SPECIALIST::before {
+    width: 30px;
+    height: 30px;
+    border: 2px solid #ff0;
+    transform: rotate(45deg);
+    box-shadow: 0 0 12px #ff0;
+}
+
+.icon-SPECIALIST::after {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f0f;
+    box-shadow: 0 0 12px #f0f;
+    animation: rotate 4s linear infinite;
+}

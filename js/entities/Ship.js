@@ -95,6 +95,12 @@ export class Ship extends Entity {
         this.inputMultiplier = 1.0;
         this.inNebula = false;
         this.timeScale = 1.0;
+
+        // Parry Mechanic
+        this.parryActive = false;
+        this.parryTimer = 0;
+        this.parryCooldownTimer = 0;
+        this.parryKeyPressed = false;
     }
 
     /**
@@ -112,6 +118,21 @@ export class Ship extends Entity {
         // Teleport
         if (this.canTeleport && input.isDown('ArrowDown')) {
             this.tryTeleport(game);
+        }
+
+        // Parry
+        const parryKeyDown = input.isDown('AltLeft') || input.isDown('AltRight');
+        if (parryKeyDown && !this.parryKeyPressed && this.parryCooldownTimer <= 0) {
+            this.triggerParry();
+        }
+        this.parryKeyPressed = parryKeyDown;
+
+        if (this.parryActive) {
+            this.parryTimer -= dt;
+            if (this.parryTimer <= 0) this.parryActive = false;
+        }
+        if (this.parryCooldownTimer > 0) {
+            this.parryCooldownTimer -= dt;
         }
         if (this.teleportCooldown > 0) this.teleportCooldown -= dt;
 
@@ -336,12 +357,28 @@ export class Ship extends Entity {
             ctx.restore();
         }
 
+        // Restore from ship rotation before drawing world-space elements
         ctx.restore();
+
+        // Parry Glow (world coordinates)
+        if (this.parryActive) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius * 2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 4;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#0ff';
+            ctx.stroke();
+            ctx.fill();
+            ctx.restore();
+        }
 
         // Draw Drones
         this.drones.forEach(d => d.draw(ctx));
 
-        // Draw Laser (outside rotation for full screen)
+        // Draw Laser
         if (this.laserActive && input && input.isDown('Space')) {
             const laserLength = CONFIG.POWERUP.TYPES.LASER.LENGTH;
             const endX = this.x + Math.cos(this.angle) * laserLength;
@@ -350,8 +387,6 @@ export class Ship extends Entity {
 
             ctx.save();
             ctx.globalAlpha = pulse;
-
-            // Outer glow
             ctx.beginPath();
             ctx.moveTo(this.x, this.y);
             ctx.lineTo(endX, endY);
@@ -361,15 +396,12 @@ export class Ship extends Entity {
             ctx.shadowColor = CONFIG.POWERUP.TYPES.LASER.GLOW_COLOR;
             ctx.stroke();
 
-            // Inner beam
             ctx.beginPath();
             ctx.moveTo(this.x, this.y);
             ctx.lineTo(endX, endY);
             ctx.strokeStyle = CONFIG.POWERUP.TYPES.LASER.COLOR;
             ctx.lineWidth = CONFIG.POWERUP.TYPES.LASER.WIDTH;
-            ctx.shadowBlur = 10;
             ctx.stroke();
-
             ctx.restore();
         }
     }
@@ -476,6 +508,12 @@ export class Ship extends Entity {
 
     addMissile(amount = 1) {
         this.missiles = Math.min(this.missiles + amount, this.maxMissiles);
+    }
+
+    triggerParry() {
+        this.parryActive = true;
+        this.parryTimer = CONFIG.SHIP.PARRY.DURATION;
+        this.parryCooldownTimer = CONFIG.SHIP.PARRY.COOLDOWN;
     }
 
     takeDamage(amount) {

@@ -46,6 +46,12 @@ Le joueur peut débloquer et sélectionner différents modèles de vaisseaux dan
 - **Anomalies Temporelles** : Bulles de distorsion qui ralentissent le temps. Elles affectent tout : votre vaisseau, les projectiles et les astéroïdes.
 - **Tempêtes Solaires** : Événements imprévisibles qui inversent vos commandes et brouillent l'affichage. Restez concentré !
 
+### Mécanique de Parade (Reflect)
+- **Touche Alt** : Activez votre bouclier défensif pendant une courte fenêtre (0.5s).
+- **Réflexion des Projectiles** : Si un tir ennemi vous touche pendant la parade, il est renvoyé vers l'attaquant avec des dégâts doublés.
+- **Timing Précis** : Gameplay basé sur les réflexes. Le cooldown de 2 secondes empêche le spam.
+- **Feedback Visuel** : Une aura blanche intense entoure votre vaisseau pendant la parade active.
+
 
 ### Progression Rogue-lite
 - **Améliorations Permanentes** : Dépensez vos crédits dans le menu Game Over pour améliorer votre vaisseau de façon persistante. Chaque amélioration dispose d'une **icône néon dédiée** :
@@ -89,6 +95,7 @@ Le jeu propose des synergies puissantes lorsque plusieurs bonus sont actifs simu
 - **Flèche Bas** : Téléportation (si débloquée).
 - **Espace** : Tirer (balles normales, multi-tirs, ou laser selon les power-ups).
 - **Maj (Shift) ou X** : Lancer un missile (si débloqué et munitions disponibles).
+- **Alt** : Parade - Renvoie les projectiles ennemis. Timing précis requis (0.5s de fenêtre, 2s de recharge).
 
 ## 📘 Manuel du Code
 

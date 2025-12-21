@@ -1,5 +1,6 @@
 import { LABELS } from '../labels.js';
 import { STATE } from '../constants.js';
+import { CONFIG } from '../config.js';
 
 export class UIManager {
     constructor() {
@@ -23,6 +24,28 @@ export class UIManager {
                 document.getElementById('hud-missile-count').innerText = game.ship.missiles;
             } else {
                 missileHUD.style.display = 'none';
+            }
+
+            // Heat HUD
+            const heatBar = document.getElementById('heat-bar');
+            const heatStatus = document.getElementById('hud-heat-status');
+            const heatPercent = (game.ship.heat / CONFIG.SHIP.HEAT.MAX) * 100;
+
+            heatBar.style.width = `${heatPercent}%`;
+
+            if (game.ship.overheated) {
+                heatBar.classList.add('overheated');
+                heatStatus.innerText = 'SURCHAUFFE !';
+                heatStatus.style.color = '#ff0000';
+            } else {
+                heatBar.classList.remove('overheated');
+                if (game.ship.heat > CONFIG.SHIP.HEAT.DAMAGE_BONUS_THRESHOLD) {
+                    heatStatus.innerText = 'SURCHARGE ACTIVÉE';
+                    heatStatus.style.color = '#ffaa00';
+                } else {
+                    heatStatus.innerText = game.ship.heat > 0 ? 'CHAUFFE...' : 'REFROIDI';
+                    heatStatus.style.color = '#fff';
+                }
             }
         }
         document.getElementById('hud-wave').innerText = game.wave;

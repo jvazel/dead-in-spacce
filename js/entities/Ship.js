@@ -82,6 +82,11 @@ export class Ship extends Entity {
         this.missiles = this.maxMissiles;
         this.lastMissileTime = 0;
         this.missileCooldown = 0.5;
+
+        // Heat System
+        this.heat = 0;
+        this.overheated = false;
+        this.overheatTimer = 0;
     }
 
     /**
@@ -219,6 +224,21 @@ export class Ship extends Entity {
         // Drones
         this.drones.forEach(d => d.update(dt, game.asteroids, game));
 
+        // Heat System
+        if (this.overheated) {
+            this.overheatTimer -= dt;
+            if (this.overheatTimer <= 0) {
+                this.overheated = false;
+                this.heat = 0;
+            }
+        } else {
+            // Decrease heat if not firing (but we check if firing in shoot(), 
+            // so we'll just always decrease it and increase it in shoot())
+            if (!game.input.isDown('Space')) {
+                this.heat = Math.max(0, this.heat - CONFIG.SHIP.HEAT.DECREASE_RATE * dt);
+            }
+        }
+
         // Mines
         if (this.minesActive) {
             // Synergy 3: Afterburner Mines
@@ -323,12 +343,40 @@ export class Ship extends Entity {
     }
 
     shoot(game) {
-        // If laser active, don't shoot bullets
-        if (this.laserActive) return;
+        // Overheat check
+        if (this.overheated) return;
+
+        // If laser active, handled by CollisionManager, but we still want to increase heat
+        if (this.laserActive && game.input.isDown('Space')) {
+            this.heat += (CONFIG.SHIP.HEAT.INCREASE_PER_SHOT * 0.2); // Continuous heat for laser
+            if (this.heat >= CONFIG.SHIP.HEAT.MAX) {
+                this.overheated = true;
+                this.overheatTimer = CONFIG.SHIP.HEAT.OVERHEAT_DURATION;
+                this.laserActive = false; // Kill laser on overheat
+            }
+            return;
+        }
 
         const now = Date.now() / 1000;
         if (now - this.lastShotTime >= this.fireRateDelay) {
             this.lastShotTime = now;
+
+            // Heat Increase
+            this.heat += CONFIG.SHIP.HEAT.INCREASE_PER_SHOT;
+            if (this.heat >= CONFIG.SHIP.HEAT.MAX) {
+                this.overheated = true;
+                this.overheatTimer = CONFIG.SHIP.HEAT.OVERHEAT_DURATION;
+                this.heat = CONFIG.SHIP.HEAT.MAX;
+                return;
+            }
+
+            // Damage Bonus
+            let currentDamage = this.damage;
+            if (this.heat > CONFIG.SHIP.HEAT.DAMAGE_BONUS_THRESHOLD) {
+                const ratio = (this.heat - CONFIG.SHIP.HEAT.DAMAGE_BONUS_THRESHOLD) / (CONFIG.SHIP.HEAT.MAX - CONFIG.SHIP.HEAT.DAMAGE_BONUS_THRESHOLD);
+                const bonus = 1 + (CONFIG.SHIP.HEAT.DAMAGE_BONUS_MAX - 1) * ratio;
+                currentDamage *= bonus;
+            }
 
             const bulletProps = {
                 homing: this.homing,
@@ -338,7 +386,7 @@ export class Ship extends Entity {
                     this.homing ? CONFIG.POWERUP.TYPES.HOMING.COLOR :
                         this.piercing ? CONFIG.POWERUP.TYPES.PIERCING.COLOR :
                             CONFIG.VISUALS.COLORS.BULLET,
-                damage: this.damage,
+                damage: currentDamage,
                 bounce: this.bounce
             };
 

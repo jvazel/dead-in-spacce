@@ -40,7 +40,7 @@ canvas {
 
 .stat-container span:first-child {
     display: inline-block;
-    width: 80px;
+    width: 110px;
 }
 
 .progress-bar {
@@ -69,6 +69,30 @@ canvas {
 .shield-fill {
     background: linear-gradient(90deg, #00ffff 0%, #44ffff 50%, #66ffff 100%);
     border-right: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.heat-fill {
+    background: linear-gradient(90deg, #ff8800 0%, #ffaa00 50%, #ffff00 100%);
+    border-right: 2px solid rgba(255, 255, 255, 0.5);
+    transition: width 0.1s ease;
+}
+
+.overheated {
+    animation: blink-red 0.3s infinite;
+}
+
+@keyframes blink-red {
+
+    0%,
+    100% {
+        background: #ff0000;
+        box-shadow: 0 0 15px #f00;
+    }
+
+    50% {
+        background: #550000;
+        box-shadow: 0 0 5px #f00;
+    }
 }
 
 .stat-value {

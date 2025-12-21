@@ -12,7 +12,15 @@ export const ENTITY_CONFIG = {
         BASE_DAMAGE: 20, // Base damage per bullet
         SHIELD_REGEN_RATE: 0.5,
         INVULNERABILITY_DURATION: 5,
-        COLLISION_DAMAGE: 20
+        COLLISION_DAMAGE: 20,
+        HEAT: {
+            MAX: 100,
+            INCREASE_PER_SHOT: 5,
+            DECREASE_RATE: 20, // per second when not firing
+            OVERHEAT_DURATION: 3.0, // seconds of lockout
+            DAMAGE_BONUS_THRESHOLD: 70, // Start bonus at 70% heat
+            DAMAGE_BONUS_MAX: 1.5 // Max 50% bonus at 100% heat
+        }
     },
     BULLET: {
         SPEED: 500,

@@ -9,7 +9,7 @@ export class CollisionManager {
     constructor() {
     }
 
-    checkCollisions(game) {
+    checkCollisions(game, dt) {
         // --- Bullet Collisions ---
         for (const b of game.bullets) {
             if (b.enemy) {
@@ -101,7 +101,7 @@ export class CollisionManager {
         }
 
         // --- Specialist Weapons ---
-        this.checkSpecialistCollisions(game);
+        this.checkSpecialistCollisions(game, dt);
     }
 
     handleAsteroidHit(bullet, asteroid, game) {
@@ -112,9 +112,7 @@ export class CollisionManager {
             if (bullet.hitCount >= (bullet.maxHits || 3)) bullet.markedForDeletion = true;
         }
 
-        asteroid.hp -= bullet.damage;
-        if (asteroid.hp <= 0) {
-            asteroid.markedForDeletion = true;
+        if (asteroid.takeDamage(bullet.damage)) {
             game.credits += asteroid.scoreValue || 20;
             this.createExplosion(asteroid.x, asteroid.y, CONFIG.VISUALS.COLORS.ASTEROID, game);
             this.splitAsteroid(asteroid, game);
@@ -137,9 +135,7 @@ export class CollisionManager {
 
     handleUFOHit(bullet, ufo, game) {
         bullet.markedForDeletion = true;
-        ufo.hp -= bullet.damage;
-        if (ufo.hp <= 0) {
-            ufo.markedForDeletion = true;
+        if (ufo.takeDamage(bullet.damage)) {
             game.credits += ufo.scoreValue || 200;
             if (game.ship) game.ship.addMissile(1);
             this.createExplosion(ufo.x, ufo.y, CONFIG.UFO.COLOR, game);
@@ -220,10 +216,10 @@ export class CollisionManager {
         }
     }
 
-    checkSpecialistCollisions(game) {
+    checkSpecialistCollisions(game, dt) {
         // Laser
         if (game.ship && game.ship.laserActive && game.input.isDown('Space')) {
-            this.handleLaser(game);
+            this.handleLaser(game, dt);
         }
         // Mines triggers
         for (const m of game.mines) {
@@ -277,9 +273,7 @@ export class CollisionManager {
         // Damage Asteroids
         game.asteroids.forEach(a => {
             if (dist(mine.x, mine.y, a.x, a.y) < blastRadius + a.radius) {
-                a.hp -= damage;
-                if (a.hp <= 0 && !a.markedForDeletion) {
-                    a.markedForDeletion = true;
+                if (a.takeDamage(damage)) {
                     game.credits += a.scoreValue || 20;
                     this.createExplosion(a.x, a.y, CONFIG.VISUALS.COLORS.ASTEROID, game);
                     this.splitAsteroid(a, game);
@@ -290,9 +284,7 @@ export class CollisionManager {
         // Damage UFOs
         game.ufos.forEach(u => {
             if (dist(mine.x, mine.y, u.x, u.y) < blastRadius + u.radius) {
-                u.hp -= damage;
-                if (u.hp <= 0 && !u.markedForDeletion) {
-                    u.markedForDeletion = true;
+                if (u.takeDamage(damage)) {
                     game.credits += u.scoreValue || 200;
                     this.createExplosion(u.x, u.y, CONFIG.UFO.COLOR, game);
                 }
@@ -308,9 +300,7 @@ export class CollisionManager {
 
         game.asteroids.forEach(a => {
             if (dist(bullet.x, bullet.y, a.x, a.y) < blastRadius + a.radius) {
-                a.hp -= damage;
-                if (a.hp <= 0 && !a.markedForDeletion) {
-                    a.markedForDeletion = true;
+                if (a.takeDamage(damage)) {
                     game.credits += a.scoreValue || 20;
                     this.createExplosion(a.x, a.y, CONFIG.VISUALS.COLORS.ASTEROID, game);
                     this.splitAsteroid(a, game);
@@ -320,9 +310,7 @@ export class CollisionManager {
 
         game.ufos.forEach(u => {
             if (dist(bullet.x, bullet.y, u.x, u.y) < blastRadius + u.radius) {
-                u.hp -= damage;
-                if (u.hp <= 0 && !u.markedForDeletion) {
-                    u.markedForDeletion = true;
+                if (u.takeDamage(damage)) {
                     game.credits += u.scoreValue || 200;
                     this.createExplosion(u.x, u.y, CONFIG.UFO.COLOR, game);
                 }
@@ -334,76 +322,58 @@ export class CollisionManager {
         }
     }
 
-    handleLaser(game) {
+    handleLaser(game, dt) {
         const laserLength = CONFIG.POWERUP.TYPES.LASER.LENGTH;
-        const dps = CONFIG.POWERUP.TYPES.LASER.DAMAGE_PER_SECOND / 60;
+        const dps = CONFIG.POWERUP.TYPES.LASER.DAMAGE_PER_SECOND * dt;
 
         const checkHit = (entity) => {
-            if (!entity) return false;
+            if (!entity || entity.markedForDeletion) return false;
 
-            // Distance check
             const distToEntity = dist(game.ship.x, game.ship.y, entity.x, entity.y);
             if (distToEntity > laserLength + entity.radius) return false;
 
-            // Projection check for intersection with a line segment (the laser)
-            // Normalized direction of laser
             const lx = Math.cos(game.ship.angle);
             const ly = Math.sin(game.ship.angle);
-
-            // Vector from ship to entity
             const dx = entity.x - game.ship.x;
             const dy = entity.y - game.ship.y;
-
-            // Dot product gives distance along laser line
             const dot = dx * lx + dy * ly;
 
             if (dot < 0 || dot > laserLength) return false;
 
-            // Closest point on the laser line to the entity center
             const closestX = game.ship.x + lx * dot;
             const closestY = game.ship.y + ly * dot;
-
-            // Distance from entity center to closest point on laser line
             const d = dist(entity.x, entity.y, closestX, closestY);
 
             const hit = d < entity.radius + (CONFIG.POWERUP.TYPES.LASER.WIDTH * 2);
 
-            // Synergy 1: Explosive Laser
-            if (hit && game.ship.explosive && Math.random() < 0.1) {
-                this.createExplosion(closestX, closestY, CONFIG.POWERUP.TYPES.EXPLOSIVE.COLOR, game);
-                this.applyMiniAOE(closestX, closestY, game);
-            } else if (hit && Math.random() < 0.3) {
-                // Default hit feedback (sparks)
-                game.particles.push(new Particle(closestX, closestY, CONFIG.POWERUP.TYPES.LASER.COLOR, 20, rand(0, Math.PI * 2), 0.3));
+            if (hit) {
+                // Synergy 1: Explosive Laser
+                if (game.ship.explosive && Math.random() < 0.1) {
+                    this.createExplosion(closestX, closestY, CONFIG.POWERUP.TYPES.EXPLOSIVE.COLOR, game);
+                    this.applyMiniAOE(closestX, closestY, game);
+                } else if (Math.random() < 0.3) {
+                    game.particles.push(new Particle(closestX, closestY, CONFIG.POWERUP.TYPES.LASER.COLOR, 20, rand(0, Math.PI * 2), 0.3));
+                }
             }
 
             return hit;
         };
 
-        // Synergy 4: Chain Laser (PIERCING + BOUNCE)
         const isChainLaser = game.ship.piercing && game.ship.bounce;
 
-        game.asteroids.forEach(a => {
-            if (checkHit(a)) {
-                a.hp -= dps;
-                if (isChainLaser && Math.random() < 0.05) this.handleChainEffect(a, dps * 5, game);
-                if (a.hp <= 0 && !a.markedForDeletion) {
-                    a.markedForDeletion = true;
-                    game.credits += a.scoreValue || 20;
-                    this.createExplosion(a.x, a.y, CONFIG.VISUALS.COLORS.ASTEROID, game);
-                    this.splitAsteroid(a, game);
-                }
-            }
-        });
-
-        game.ufos.forEach(u => {
-            if (checkHit(u)) {
-                u.hp -= dps;
-                if (isChainLaser && Math.random() < 0.05) this.handleChainEffect(u, dps * 5, game);
-                if (u.hp <= 0 && !u.markedForDeletion) {
-                    u.markedForDeletion = true;
-                    game.credits += u.scoreValue || 200;
-                    this.createExplosion(u.x, u.y, CONFIG.UFO.COLOR, game);
+        [...game.asteroids, ...game.ufos].forEach(e => {
+            if (checkHit(e)) {
+                const destroyed = e.takeDamage(dps);
+                if (isChainLaser && Math.random() < 0.05) this.handleChainEffect(e, dps * 5, game);
+                if (destroyed) {
+                    if (e instanceof Asteroid) {
+                        game.credits += e.scoreValue || 20;
+                        this.createExplosion(e.x, e.y, CONFIG.VISUALS.COLORS.ASTEROID, game);
+                        this.splitAsteroid(e, game);
+                    } else {
+                        game.credits += e.scoreValue || 200;
+                        this.createExplosion(e.x, e.y, CONFIG.UFO.COLOR, game);
+                    }
                 }
             }
         });

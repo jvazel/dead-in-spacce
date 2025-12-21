@@ -86,4 +86,13 @@ export class UFO extends Entity {
 
         ctx.restore();
     }
+
+    takeDamage(amount) {
+        this.hp -= amount;
+        if (this.hp <= 0 && !this.markedForDeletion) {
+            this.markedForDeletion = true;
+            return true; // Destroyed
+        }
+        return false;
+    }
 }

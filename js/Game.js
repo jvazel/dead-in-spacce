@@ -34,8 +34,6 @@ export class Game {
         this.bullets = [];
         this.asteroids = [];
         this.powerups = [];
-        this.powerups = [];
-        this.enemies = []; // Not really used yet but kept for structure
         this.ufos = [];
         this.ufoTimer = 0;
         this.mines = [];
@@ -49,7 +47,6 @@ export class Game {
         // Managers
         this.collisionManager = new CollisionManager();
         this.upgradeManager = new UpgradeManager();
-        this.uiManager = new UIManager();
         this.uiManager = new UIManager();
         this.waveManager = new WaveManager();
         this.saveManager = new SaveManager();
@@ -124,7 +121,6 @@ export class Game {
     // Managers use 'game' instance passed to them.
 
     gameOver() {
-        this.state = STATE.GAMEOVER;
         this.state = STATE.GAMEOVER;
         // Save Credits
         this.saveManager.addCredits(this.credits);
@@ -203,7 +199,7 @@ export class Game {
         this.updateBlackHoles(dt);
 
         // --- COLLISIONS & CLEANUP ---
-        this.collisionManager.checkCollisions(this);
+        this.collisionManager.checkCollisions(this, dt);
 
         this.bullets = this.bullets.filter(b => !b.markedForDeletion);
         this.asteroids = this.asteroids.filter(a => !a.markedForDeletion);
@@ -302,7 +298,6 @@ export class Game {
         pullEntity(this.ship);
         this.asteroids.forEach(pullEntity);
         if (this.boss) pullEntity(this.boss);
-        this.enemies.forEach(pullEntity);
         this.ufos.forEach(pullEntity);
         this.bullets.forEach(pullEntity);
         this.particles.forEach(pullEntity);

@@ -25,7 +25,7 @@ export class Ship extends Entity {
         this.velX = 0;
         this.velY = 0;
         this.rotationSpeed = CONFIG.SHIP.ROTATION_SPEED;
-        this.thrust = CONFIG.SHIP.THRUST;
+        this.thrust = CONFIG.SHIP.THRUST + (stats.thrust || 0);
         this.friction = CONFIG.SHIP.FRICTION;
 
         // Stats
@@ -69,7 +69,9 @@ export class Ship extends Entity {
         this.trailSpawnTimer = 0;
         this.bounce = false;
         this.bounceTimer = 0;
-        this.powerupDurationMultiplier = 1.0;
+        this.powerupDurationMultiplier = stats.powerupDurationMultiplier || 1.0;
+        this.noDrones = stats.noDrones || false;
+        this.vesselId = stats.vesselId || 'SHIP';
 
         // Upgrades
         this.drones = [];
@@ -92,6 +94,7 @@ export class Ship extends Entity {
         this.engineMultiplier = 1.0;
         this.inputMultiplier = 1.0;
         this.inNebula = false;
+        this.timeScale = 1.0;
     }
 
     /**
@@ -268,9 +271,30 @@ export class Ship extends Entity {
         // Use 'screen' blending to make the black background of the sprite transparent
         ctx.globalCompositeOperation = 'screen';
 
-        // Adjust scale if needed. Assuming 64x64 or similar, let's draw it relative to radius
-        const size = this.radius * 2.8; // Slightly larger than hitbox
-        ctx.drawImage(IMAGES.ship, -size / 2, -size / 2, size, size);
+        // Get vessel image
+        const vesselConfig = CONFIG.VESSELS[this.vesselId];
+        const shipImg = IMAGES[vesselConfig.IMAGE] || IMAGES.ship;
+
+        // Adjust scale to keep size consistent regardless of image pixel dimensions
+        // We want the ship to fit roughly within radius * 2.8 box
+        const targetSize = this.radius * 2.8;
+
+        // If image has known dimensions, we can use them to maintain aspect ratio
+        // Otherwise draw at targetSize square
+        if (shipImg.width > 0) {
+            const aspect = shipImg.width / shipImg.height;
+            let drawW, drawH;
+            if (aspect > 1) {
+                drawW = targetSize;
+                drawH = targetSize / aspect;
+            } else {
+                drawH = targetSize;
+                drawW = targetSize * aspect;
+            }
+            ctx.drawImage(shipImg, -drawW / 2, -drawH / 2, drawW, drawH);
+        } else {
+            ctx.drawImage(shipImg, -targetSize / 2, -targetSize / 2, targetSize, targetSize);
+        }
 
         // Reset blend mode
         ctx.globalCompositeOperation = 'source-over';
@@ -469,6 +493,8 @@ export class Ship extends Entity {
     }
 
     addDrone(isTemporary = false) {
+        if (this.noDrones && !isTemporary) return;
+
         const count = this.drones.length;
         this.drones.push(new Drone(this, 0, isTemporary));
 

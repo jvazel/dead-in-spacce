@@ -63,10 +63,22 @@
         <p><span data-label="TOTAL_CREDITS">Total Crédits</span>: <span id="go-total-credits"
                 style="color: #ff0;">0</span></p>
 
-        <div class="shop-section">
-            <h2 data-label="PERMANENT_UPGRADES">AMÉLIORATIONS</h2>
-            <div id="permanent-upgrade-container" class="shop-grid">
-                <!-- Shop items injected by JS -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" data-tab="vessels" data-label="SELECT_VESSEL">VAISSEAUX</button>
+            <button class="tab-btn" data-tab="upgrades" data-label="PERMANENT_UPGRADES">AMÉLIORATIONS</button>
+        </div>
+
+        <div class="tabs-content">
+            <div id="tab-vessels" class="tab-pane active">
+                <div id="vessel-selection-container" class="shop-grid">
+                    <!-- Vessels injected by JS -->
+                </div>
+            </div>
+
+            <div id="tab-upgrades" class="tab-pane">
+                <div id="permanent-upgrade-container" class="shop-grid">
+                    <!-- Shop items injected by JS -->
+                </div>
             </div>
         </div>
 

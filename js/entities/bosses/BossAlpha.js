@@ -15,6 +15,7 @@ export class BossAlpha extends BossBase {
     }
 
     update(dt, game) {
+        dt *= (this.timeScale || 1.0);
         if (!game.ship) return;
 
         this.phaseTimer += dt;

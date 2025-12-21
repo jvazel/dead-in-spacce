@@ -28,6 +28,13 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
 - **IA Évolutive** : Chaque boss possède ses propres patterns de mouvement et sa difficulté augmente avec les vagues.
 - **Immunité Tactique** : Les boss sont immunisés contre les déclenchements et les dégâts des mines pour maintenir le défi.
 
+### Classes de Vaisseaux (Méta-Progression)
+Le joueur peut débloquer et sélectionner différents modèles de vaisseaux dans le magasin permanent, chacun avec ses caractéristiques uniques :
+- **Vaisseau de Base** : Équilibré et polyvalent.
+- **L'Intercepteur** : Très rapide, coque fragile, mais démarre avec la **Téléportation** débloquée.
+- **Le Tank** : Très résistant (PV élevés), mais plus lent et incapable d'utiliser des drones.
+- **Le Spécialiste** : Dégâts de base réduits, mais bénéficie d'une durée prolongée pour tous les bonus récupérés.
+
 ### Ennemis et Obstacles
 - **OVNIs** : Apparaissent périodiquement, tirent sur le joueur et se déplacent avec un mouvement sinusoïdal.
 - **Black Holes** : Génèrent une force d'attraction sur tout ce qui les entoure (joueur, astéroïdes, projectiles). Attention à ne pas vous faire aspirer !
@@ -47,6 +54,7 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
     - **Cadence de Tir** : Réduisez le délai entre les tirs.
     - **Téléportation** : Débloqué avec l'amélioration "Téléportation" (Touche Bas).
     - **Lance-Missiles** : Amélioration permanente permettant de tirer des missiles auto-guidés à zone d'effet dévastatrice.
+- **Interface à Onglets** : Le menu Game Over est organisé en onglets (**Vaisseaux** / **Améliorations**) pour une navigation fluide et claire.
 - **Améliorations In-Game (Rogue Cards)** : À la fin de chaque vague, choisissez parmi 3 bonus aléatoires :
     - **Puissance & Cadence** : Augmente les dégâts ou réduit le délai entre les tirs.
     - **PV & Bouclier** : Augmente votre résistance.

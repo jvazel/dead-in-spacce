@@ -11,7 +11,14 @@ export class SaveManager {
                 TELEPORT: 0, // 0 = locked, 1 = unlocked
                 BASE_FIRE_RATE: 0,
                 MISSILE_LAUNCHER: 0
-            }
+            },
+            vessels: {
+                SHIP: true,
+                INTERCEPTOR: false,
+                TANK: false,
+                SPECIALIST: false
+            },
+            selectedVessel: 'SHIP'
         };
         // No load() needed for session-only persistence
     }
@@ -73,5 +80,36 @@ export class SaveManager {
             return true;
         }
         return false;
+    }
+
+    buyVessel(id) {
+        const vessel = CONFIG.VESSELS[id];
+        if (!vessel) return false;
+
+        if (this.data.credits >= vessel.COST) {
+            this.data.credits -= vessel.COST;
+            this.data.vessels[id] = true;
+            this.data.selectedVessel = id;
+            this.save();
+            return true;
+        }
+        return false;
+    }
+
+    selectVessel(id) {
+        if (this.data.vessels[id]) {
+            this.data.selectedVessel = id;
+            this.save();
+            return true;
+        }
+        return false;
+    }
+
+    isVesselUnlocked(id) {
+        return !!this.data.vessels[id];
+    }
+
+    getSelectedVessel() {
+        return this.data.selectedVessel;
     }
 }

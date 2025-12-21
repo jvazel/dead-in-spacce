@@ -51,6 +51,7 @@ export class Asteroid extends Entity {
     }
 
     update(dt) {
+        dt *= (this.timeScale || 1.0);
         this.x += this.velX * dt;
         this.y += this.velY * dt;
         this.rotAngle += this.rotSpeed * dt;

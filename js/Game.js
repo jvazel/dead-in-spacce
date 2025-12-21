@@ -91,27 +91,32 @@ export class Game {
         this.wave = 1;
         this.credits = 0;
         // Apply Upgrades
-        const shipConfig = {
-            damage: CONFIG.PERMANENT_UPGRADES.BASE_DAMAGE.INCREMENT * this.saveManager.getUpgradeLevel('BASE_DAMAGE'),
-            hp: CONFIG.PERMANENT_UPGRADES.BASE_HP.INCREMENT * this.saveManager.getUpgradeLevel('BASE_HP'),
-            shield: CONFIG.PERMANENT_UPGRADES.BASE_SHIELD.INCREMENT * this.saveManager.getUpgradeLevel('BASE_SHIELD'),
-            fireRate: CONFIG.PERMANENT_UPGRADES.BASE_FIRE_RATE.INCREMENT * this.saveManager.getUpgradeLevel('BASE_FIRE_RATE'),
-            teleport: this.saveManager.getUpgradeLevel('TELEPORT') > 0,
-            missileLauncher: this.saveManager.getUpgradeLevel('MISSILE_LAUNCHER')
-        };
-
-        this.ship = new Ship(CANVAS.width / 2, CANVAS.height / 2, shipConfig);
-        this.bullets = [];
-        this.asteroids = [];
-        this.powerups = [];
-        this.ufos = [];
-        this.ufoTimer = 0;
-        this.mines = [];
-        this.blackHoles = [];
-        this.blackHoleTimer = 0;
         this.boss = null;
         this.particles = [];
         this.trails = [];
+        this.nebulaClouds = [];
+        this.timeAnomalies = [];
+        this.solarStormTimer = 0;
+
+        // Get Selected Vessel
+        const vesselId = this.saveManager.getSelectedVessel();
+        const vesselConfig = CONFIG.VESSELS[vesselId];
+
+        // Apply Upgrades + Vessel Base Stats
+        const shipConfig = {
+            vesselId: vesselId,
+            damage: (CONFIG.PERMANENT_UPGRADES.BASE_DAMAGE.INCREMENT * this.saveManager.getUpgradeLevel('BASE_DAMAGE')) + (vesselConfig.STATS.damage || 0),
+            hp: (CONFIG.PERMANENT_UPGRADES.BASE_HP.INCREMENT * this.saveManager.getUpgradeLevel('BASE_HP')) + (vesselConfig.STATS.hp || 0),
+            shield: (CONFIG.PERMANENT_UPGRADES.BASE_SHIELD.INCREMENT * this.saveManager.getUpgradeLevel('BASE_SHIELD')) + (vesselConfig.STATS.shield || 0),
+            fireRate: CONFIG.PERMANENT_UPGRADES.BASE_FIRE_RATE.INCREMENT * this.saveManager.getUpgradeLevel('BASE_FIRE_RATE'),
+            teleport: (this.saveManager.getUpgradeLevel('TELEPORT') > 0) || !!vesselConfig.STATS.teleport,
+            missileLauncher: this.saveManager.getUpgradeLevel('MISSILE_LAUNCHER'),
+            thrust: vesselConfig.STATS.thrust || 0,
+            powerupDurationMultiplier: vesselConfig.STATS.powerupDuration || 1.0,
+            noDrones: !!vesselConfig.STATS.noDrones
+        };
+
+        this.ship = new Ship(CANVAS.width / 2, CANVAS.height / 2, shipConfig);
 
         // Reset legacy costs if needed
         this.costs = { ...CONFIG.SHOP.COSTS };

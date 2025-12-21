@@ -552,6 +552,84 @@ canvas {
     }
 }
 
+/* Tabs System */
+.tabs-nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+    padding-bottom: 10px;
+}
+
+.tab-btn {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+.tab-btn:hover {
+    background: rgba(0, 255, 255, 0.2);
+    border-color: #0ff;
+}
+
+.tab-btn.active {
+    background: #0ff;
+    color: #000;
+    border-color: #0ff;
+    box-shadow: 0 0 10px #0ff;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 10px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+/* Scrollbar for shop-grid */
+.shop-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.shop-grid::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.shop-grid::-webkit-scrollbar-thumb {
+    background: #0ff;
+    border-radius: 3px;
+}
+
 /* Permanent Upgrade Icons (Shop) */
 .icon-BASE_DAMAGE::before {
     width: 40px;
@@ -649,4 +727,91 @@ canvas {
     50% {
         opacity: 0;
     }
+}
+
+/* Vessel Selection Icons */
+.vessel-card.selected {
+    border-color: #0ff;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    background: rgba(0, 255, 255, 0.1);
+}
+
+.vessel-preview {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 15px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.vessel-preview::before,
+.vessel-preview::after {
+    content: '';
+    position: absolute;
+}
+
+/* Base Ship: Classic Delta */
+.icon-SHIP::before {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 25px solid #fff;
+    filter: drop-shadow(0 0 8px #fff);
+}
+
+/* Interceptor: Sharp Dart */
+.icon-INTERCEPTOR::before {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 35px solid #0ff;
+    filter: drop-shadow(0 0 10px #0ff);
+}
+
+.icon-INTERCEPTOR::after {
+    width: 40px;
+    height: 2px;
+    background: #0ff;
+    top: 60%;
+    box-shadow: 0 0 10px #0ff;
+}
+
+/* Tank: Heavy Fortress */
+.icon-TANK::before {
+    width: 35px;
+    height: 35px;
+    border: 3px solid #f00;
+    background: rgba(255, 0, 0, 0.2);
+    box-shadow: 0 0 15px #f00;
+}
+
+.icon-TANK::after {
+    width: 15px;
+    height: 15px;
+    background: #f00;
+    box-shadow: 0 0 8px #f00;
+}
+
+/* Specialist: Geometric Core */
+.icon-SPECIALIST::before {
+    width: 30px;
+    height: 30px;
+    border: 2px solid #ff0;
+    transform: rotate(45deg);
+    box-shadow: 0 0 12px #ff0;
+}
+
+.icon-SPECIALIST::after {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f0f;
+    box-shadow: 0 0 12px #f0f;
+    animation: rotate 4s linear infinite;
 }

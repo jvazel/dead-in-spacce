@@ -22,6 +22,40 @@ export const ENTITY_CONFIG = {
             DAMAGE_BONUS_MAX: 1.5 // Max 50% bonus at 100% heat
         }
     },
+    VESSELS: {
+        SHIP: {
+            ID: 'SHIP',
+            LABEL: 'Vaisseau de Base',
+            DESCRIPTION: 'Équilibré et polyvalent.',
+            STATS: { hp: 0, thrust: 0, damage: 0, powerupDuration: 1.0 },
+            IMAGE: 'ship',
+            COST: 0
+        },
+        INTERCEPTOR: {
+            ID: 'INTERCEPTOR',
+            LABEL: 'L\'Intercepteur',
+            DESCRIPTION: 'Rapide, démarre avec Téléportation, mais coque fragile.',
+            STATS: { hp: -40, thrust: 200, damage: 0, powerupDuration: 1.0, teleport: true },
+            IMAGE: 'player_interceptor',
+            COST: 500
+        },
+        TANK: {
+            ID: 'TANK',
+            LABEL: 'Le Tank',
+            DESCRIPTION: 'Lent et robuste. Impossible d\'utiliser des drones.',
+            STATS: { hp: 100, thrust: -150, damage: 0, powerupDuration: 1.0, noDrones: true },
+            IMAGE: 'player_tank',
+            COST: 600
+        },
+        SPECIALIST: {
+            ID: 'SPECIALIST',
+            LABEL: 'Le Spécialiste',
+            DESCRIPTION: 'Dégâts de base réduits, mais les power-ups durent 2x plus longtemps.',
+            STATS: { hp: 0, thrust: 0, damage: -10, powerupDuration: 2.0 },
+            IMAGE: 'player_specialist',
+            COST: 800
+        }
+    },
     BULLET: {
         SPEED: 500,
         LIFE: 1.5,
@@ -114,7 +148,7 @@ export const ENTITY_CONFIG = {
         },
         TIME_ANOMALY: {
             RADIUS: 120,
-            TIME_SCALE: 0.3,
+            TIME_SCALE: 0.1,
             COLOR: 'rgba(0, 255, 255, 0.2)',
             SPAWN_INTERVAL: 60,
             DURATION: 15

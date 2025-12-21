@@ -128,3 +128,8 @@ Composants d'interface complexes :
 - **Système de Managers** : Chaque manager a une responsabilité unique, facilitant le débogage et l'ajout de fonctionnalités.
 - **Collisions Avancées** : Support pour les cercles englobants et raycasting pour le laser haute précision.
 - **Graphismes Néon** : Rendu optimisé utilisant les gradients et les effets de flou (glow) natifs du canvas.
+
+### Optimisations Techniques
+- **Système de Dégâts Unifié** : Architecture harmonisée utilisant une méthode `takeDamage` pour toutes les entités destructibles, simplifiant la maintenance et assurant un comportement cohérent des projectiles et du laser.
+- **Calibrage Laser (DPS)** : Le laser utilise désormais un calcul basé sur le temps réel (`dt`), garantissant une puissance équilibrée indépendamment du taux de rafraîchissement de l'écran (60Hz, 144Hz, etc.).
+- **Performance** : Réduction du nombre d'itérations dans le gestionnaire de collisions grâce à l'unification des boucles de détection.

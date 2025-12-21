@@ -4,9 +4,10 @@ import { CONFIG } from '../config.js';
 import { dist } from '../utils.js';
 
 export class Drone extends Entity {
-    constructor(ship, offsetAngle) {
+    constructor(ship, offsetAngle, isTemporary = false) {
         super(ship.x, ship.y, CONFIG.DRONE.RADIUS);
         this.ship = ship;
+        this.isTemporary = isTemporary;
         this.orbitAngle = offsetAngle;
         this.orbitRadius = CONFIG.DRONE.ORBIT_RADIUS;
         this.orbitSpeed = CONFIG.DRONE.ORBIT_SPEED;

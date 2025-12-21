@@ -122,6 +122,16 @@ export class CollisionManager {
             if (Math.random() < CONFIG.POWERUP.DROP_CHANCE) {
                 this.spawnPowerUp(asteroid.x, asteroid.y, game);
             }
+
+            // Synergy 6: Siphon Kills (Invulnerability + Health Upgrade)
+            if (game.ship && game.ship.invulnerable && Math.random() < 0.1) {
+                game.ship.hp = Math.min(game.ship.hp + 5, game.ship.maxHp);
+                if (game.ship.maxShield > 0) game.ship.shield = Math.min(game.ship.shield + 0.5, game.ship.maxShield);
+            }
+        }
+
+        if (bullet.explosive) {
+            this.detonateExplosiveBullet(bullet, game);
         }
     }
 
@@ -136,6 +146,15 @@ export class CollisionManager {
             if (Math.random() < CONFIG.UFO.DROP_CHANCE) {
                 this.spawnPowerUp(ufo.x, ufo.y, game);
             }
+
+            // Synergy 6: Siphon Kills
+            if (game.ship && game.ship.invulnerable && Math.random() < 0.2) {
+                game.ship.hp = Math.min(game.ship.hp + 10, game.ship.maxHp);
+            }
+        }
+
+        if (bullet.explosive) {
+            this.detonateExplosiveBullet(bullet, game);
         }
     }
 
@@ -185,18 +204,18 @@ export class CollisionManager {
 
         if (ship[propName] !== undefined || ship[propName + 'Timer'] !== undefined) {
             ship[propName] = true;
-            ship[propName + 'Timer'] = config.DURATION;
+            ship[propName + 'Timer'] = config.DURATION * (ship.powerupDurationMultiplier || 1.0);
         } else {
             // Fallback for types that might not follow the naming convention exactly
             if (type === 'MULTISHOT') {
                 ship.multiShot = true;
-                ship.multiShotTimer = config.DURATION;
+                ship.multiShotTimer = config.DURATION * (ship.powerupDurationMultiplier || 1.0);
             } else if (type === 'INVULNERABILITY') {
                 ship.invulnerable = true;
-                ship.invulnerableTimer = config.DURATION;
+                ship.invulnerableTimer = config.DURATION * (ship.powerupDurationMultiplier || 1.0);
             } else if (type === 'LASER') {
                 ship.laserActive = true;
-                ship.laserTimer = config.DURATION;
+                ship.laserTimer = config.DURATION * (ship.powerupDurationMultiplier || 1.0);
             }
         }
     }
@@ -227,12 +246,6 @@ export class CollisionManager {
                     this.detonateMine(m, game);
                     break;
                 }
-            }
-            if (m.markedForDeletion) continue;
-
-            // Boss triggers mines
-            if (game.boss && dist(m.x, m.y, game.boss.x, game.boss.y) < triggerRadius + game.boss.radius) {
-                this.detonateMine(m, game);
             }
         }
     }
@@ -285,9 +298,38 @@ export class CollisionManager {
                 }
             }
         });
+    }
 
-        // Damage Boss
-        if (game.boss && dist(mine.x, mine.y, game.boss.x, game.boss.y) < blastRadius + game.boss.radius) {
+    detonateExplosiveBullet(bullet, game) {
+        const blastRadius = CONFIG.POWERUP.TYPES.EXPLOSIVE.BLAST_RADIUS;
+        const damage = CONFIG.POWERUP.TYPES.EXPLOSIVE.DAMAGE;
+
+        this.createExplosion(bullet.x, bullet.y, bullet.color, game);
+
+        game.asteroids.forEach(a => {
+            if (dist(bullet.x, bullet.y, a.x, a.y) < blastRadius + a.radius) {
+                a.hp -= damage;
+                if (a.hp <= 0 && !a.markedForDeletion) {
+                    a.markedForDeletion = true;
+                    game.credits += a.scoreValue || 20;
+                    this.createExplosion(a.x, a.y, CONFIG.VISUALS.COLORS.ASTEROID, game);
+                    this.splitAsteroid(a, game);
+                }
+            }
+        });
+
+        game.ufos.forEach(u => {
+            if (dist(bullet.x, bullet.y, u.x, u.y) < blastRadius + u.radius) {
+                u.hp -= damage;
+                if (u.hp <= 0 && !u.markedForDeletion) {
+                    u.markedForDeletion = true;
+                    game.credits += u.scoreValue || 200;
+                    this.createExplosion(u.x, u.y, CONFIG.UFO.COLOR, game);
+                }
+            }
+        });
+
+        if (game.boss && dist(bullet.x, bullet.y, game.boss.x, game.boss.y) < blastRadius + game.boss.radius) {
             game.boss.takeDamage(damage);
         }
     }
@@ -324,13 +366,27 @@ export class CollisionManager {
             // Distance from entity center to closest point on laser line
             const d = dist(entity.x, entity.y, closestX, closestY);
 
-            // Hit if distance is less than entity radius + half laser width
-            return d < entity.radius + (CONFIG.POWERUP.TYPES.LASER.WIDTH * 2);
+            const hit = d < entity.radius + (CONFIG.POWERUP.TYPES.LASER.WIDTH * 2);
+
+            // Synergy 1: Explosive Laser
+            if (hit && game.ship.explosive && Math.random() < 0.1) {
+                this.createExplosion(closestX, closestY, CONFIG.POWERUP.TYPES.EXPLOSIVE.COLOR, game);
+                this.applyMiniAOE(closestX, closestY, game);
+            } else if (hit && Math.random() < 0.3) {
+                // Default hit feedback (sparks)
+                game.particles.push(new Particle(closestX, closestY, CONFIG.POWERUP.TYPES.LASER.COLOR, 20, rand(0, Math.PI * 2), 0.3));
+            }
+
+            return hit;
         };
+
+        // Synergy 4: Chain Laser (PIERCING + BOUNCE)
+        const isChainLaser = game.ship.piercing && game.ship.bounce;
 
         game.asteroids.forEach(a => {
             if (checkHit(a)) {
                 a.hp -= dps;
+                if (isChainLaser && Math.random() < 0.05) this.handleChainEffect(a, dps * 5, game);
                 if (a.hp <= 0 && !a.markedForDeletion) {
                     a.markedForDeletion = true;
                     game.credits += a.scoreValue || 20;
@@ -343,6 +399,7 @@ export class CollisionManager {
         game.ufos.forEach(u => {
             if (checkHit(u)) {
                 u.hp -= dps;
+                if (isChainLaser && Math.random() < 0.05) this.handleChainEffect(u, dps * 5, game);
                 if (u.hp <= 0 && !u.markedForDeletion) {
                     u.markedForDeletion = true;
                     game.credits += u.scoreValue || 200;
@@ -353,6 +410,39 @@ export class CollisionManager {
 
         if (game.boss && checkHit(game.boss)) {
             game.boss.takeDamage(dps);
+            if (isChainLaser && Math.random() < 0.05) this.handleChainEffect(game.boss, dps * 5, game);
+        }
+    }
+
+    applyMiniAOE(x, y, game) {
+        const radius = 50;
+        const damage = 5;
+        game.asteroids.forEach(a => {
+            if (dist(x, y, a.x, a.y) < radius + a.radius) a.hp -= damage;
+        });
+        game.ufos.forEach(u => {
+            if (dist(x, y, u.x, u.y) < radius + u.radius) u.hp -= damage;
+        });
+    }
+
+    handleChainEffect(source, damage, game) {
+        const chainRadius = 200;
+        let targets = [...game.asteroids, ...game.ufos];
+        if (game.boss) targets.push(game.boss);
+
+        // Find up to 3 nearby targets
+        let count = 0;
+        for (const t of targets) {
+            if (t === source || t.markedForDeletion) continue;
+            if (dist(source.x, source.y, t.x, t.y) < chainRadius) {
+                if (t.takeDamage) t.takeDamage(damage);
+                else t.hp -= damage;
+
+                // Visual: Arc
+                game.particles.push(new Particle(t.x, t.y, '#00ffff', 50, rand(0, Math.PI * 2), 0.5));
+                count++;
+                if (count >= 3) break;
+            }
         }
     }
 

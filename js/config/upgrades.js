@@ -95,6 +95,14 @@ export const UPGRADE_CONFIG = {
                 TYPE: 'missileRefill',
                 VALUE: 3,
                 WEIGHT: 0.8
+            },
+            {
+                ID: 'POWERUP_DURATION_UP',
+                LABEL: 'Bonus Étendu',
+                DESCRIPTION: 'Augmente la durée de TOUS les bonus de +20%.',
+                TYPE: 'powerupDuration',
+                VALUE: 0.2,
+                WEIGHT: 0.7
             }
         ]
     },

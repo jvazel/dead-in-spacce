@@ -69,6 +69,7 @@ export class Ship extends Entity {
         this.trailSpawnTimer = 0;
         this.bounce = false;
         this.bounceTimer = 0;
+        this.powerupDurationMultiplier = 1.0;
 
         // Upgrades
         this.drones = [];
@@ -140,6 +141,18 @@ export class Ship extends Entity {
             if (this.multiShotTimer <= 0) this.multiShot = false;
         }
 
+        // Synergy 2: Temporary Drones (INVULNERABILITY + MULTISHOT)
+        if (this.invulnerable && this.multiShot) {
+            if (!this.tempDronesActive) {
+                this.tempDronesActive = true;
+                this.addDrone(true);
+                this.addDrone(true);
+            }
+        } else if (this.tempDronesActive) {
+            this.tempDronesActive = false;
+            this.drones = this.drones.filter(d => !d.isTemporary);
+        }
+
         // Laser
         if (this.laserActive) {
             this.laserTimer -= dt;
@@ -208,7 +221,9 @@ export class Ship extends Entity {
 
         // Mines
         if (this.minesActive) {
-            this.mineTimer -= dt;
+            // Synergy 3: Afterburner Mines
+            const multiplier = this.afterburner ? 4 : 1;
+            this.mineTimer -= dt * multiplier;
             if (this.mineTimer <= 0) {
                 this.mineTimer = CONFIG.MINE.DROP_INTERVAL;
                 game.mines.push(new Mine(this.x, this.y));
@@ -360,8 +375,17 @@ export class Ship extends Entity {
             this.missiles--;
             this.lastMissileTime = now;
 
-            // Spawn missile at current angle
-            game.bullets.push(new Missile(this.x, this.y, this.angle, CONFIG.MISSILE.DAMAGE));
+            // Synergy 5: Missile Fan (Rain)
+            if (this.multiShot) {
+                const spread = 0.3;
+                const angles = [this.angle - spread, this.angle, this.angle + spread];
+                angles.forEach(angle => {
+                    game.bullets.push(new Missile(this.x, this.y, angle, CONFIG.MISSILE.DAMAGE));
+                });
+            } else {
+                // Spawn missile at current angle
+                game.bullets.push(new Missile(this.x, this.y, this.angle, CONFIG.MISSILE.DAMAGE));
+            }
 
             // Visual feedback
             for (let i = 0; i < 5; i++) {
@@ -388,12 +412,9 @@ export class Ship extends Entity {
         }
     }
 
-    addDrone() {
+    addDrone(isTemporary = false) {
         const count = this.drones.length;
-        const angle = (Math.PI * 2 / (count + 1)) * count; // Simple distribution, though re-distributing would be better
-        // Actually, let's just add it at 0 and let them space out if we implemented flocking, 
-        // but for simple orbit, let's just space them evenly by resetting all angles
-        this.drones.push(new Drone(this, 0));
+        this.drones.push(new Drone(this, 0, isTemporary));
 
         // Redistribute angles
         this.drones.forEach((d, i) => {

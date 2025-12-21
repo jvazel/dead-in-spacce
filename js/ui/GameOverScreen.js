@@ -51,6 +51,7 @@ export class GameOverScreen {
             }
 
             card.innerHTML = `
+                <div class="upgrade-icon icon-${key}"></div>
                 <h3>${upgrade.LABEL}</h3>
                 <div class="desc">${upgrade.DESCRIPTION}</div>
                 <div class="stats">

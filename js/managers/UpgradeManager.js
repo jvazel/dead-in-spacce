@@ -28,6 +28,7 @@ export class UpgradeManager {
             const card = document.createElement('div');
             card.className = 'upgrade-card';
             card.innerHTML = `
+                <div class="upgrade-icon icon-${choice.TYPE}"></div>
                 <div class="upgrade-title">${choice.LABEL}</div>
                 <div class="upgrade-desc">${choice.DESCRIPTION}</div>
             `;
@@ -68,6 +69,9 @@ export class UpgradeManager {
                 break;
             case 'missileRefill':
                 game.ship.addMissile(upgrade.VALUE);
+                break;
+            case 'powerupDuration':
+                game.ship.powerupDurationMultiplier += upgrade.VALUE;
                 break;
         }
 

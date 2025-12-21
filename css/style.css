@@ -294,8 +294,11 @@ canvas {
     border: 1px solid #444;
     border-radius: 5px;
     padding: 10px;
-    text-align: left;
+    text-align: center;
     transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .shop-card:hover {
@@ -358,4 +361,268 @@ canvas {
     color: #0f0;
     border: none;
     cursor: default;
+}
+
+/* Upgrade Card Icons */
+.upgrade-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Base style for icon shapes */
+.upgrade-icon::before,
+.upgrade-icon::after {
+    content: '';
+    position: absolute;
+    box-sizing: border-box;
+}
+
+/* Damage Icon: Crossed geometric spikes */
+.icon-damage::before {
+    width: 40px;
+    height: 4px;
+    background: #f0f;
+    transform: rotate(45deg);
+    box-shadow: 0 0 10px #f0f;
+}
+
+.icon-damage::after {
+    width: 40px;
+    height: 4px;
+    background: #f0f;
+    transform: rotate(-45deg);
+    box-shadow: 0 0 10px #f0f;
+}
+
+/* Fire Rate Icon: Rotating circle */
+.icon-fireRateDelay::before {
+    width: 35px;
+    height: 35px;
+    border: 3px solid #ff0;
+    border-radius: 50%;
+    border-top-color: transparent;
+    box-shadow: 0 0 10px #ff0;
+    animation: rotate 2s linear infinite;
+}
+
+.icon-fireRateDelay::after {
+    width: 8px;
+    height: 8px;
+    background: #ff0;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ff0;
+}
+
+/* Max HP Icon: Diamond */
+.icon-maxHp::before {
+    width: 30px;
+    height: 30px;
+    background: #0f0;
+    transform: rotate(45deg);
+    box-shadow: 0 0 10px #0f0;
+}
+
+/* Shield Icon: Double circles */
+.icon-maxShield::before {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #0ff;
+    border-radius: 50%;
+    box-shadow: 0 0 15px #0ff;
+}
+
+.icon-maxShield::after {
+    width: 25px;
+    height: 25px;
+    border: 1px solid #0ff;
+    border-radius: 50%;
+}
+
+/* Multi-shot Icon: Triple bars */
+.icon-multiShotDuration::before {
+    width: 6px;
+    height: 20px;
+    background: #f80;
+    box-shadow: -12px 0 10px #f80, 0 0 10px #f80, 12px 0 10px #f80;
+}
+
+/* Drone Icon: Pulsing eye */
+.icon-drone::before {
+    width: 30px;
+    height: 15px;
+    border: 2px solid #aaa;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #fff;
+}
+
+.icon-drone::after {
+    width: 6px;
+    height: 6px;
+    background: #f00;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #f00;
+    animation: blink 1s step-end infinite;
+}
+
+/* Drone Damage Icon */
+.icon-droneDamage::before {
+    width: 30px;
+    height: 15px;
+    border: 2px solid #f00;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #f00;
+}
+
+/* Repair Icon: Cross */
+.icon-hp::before {
+    width: 30px;
+    height: 8px;
+    background: #0f0;
+    box-shadow: 0 0 10px #0f0;
+}
+
+.icon-hp::after {
+    width: 8px;
+    height: 30px;
+    background: #0f0;
+    box-shadow: 0 0 10px #0f0;
+}
+
+/* Missile Icon: Triangle */
+.icon-missileRefill::before {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 30px solid #0ff;
+    filter: drop-shadow(0 0 5px #0ff);
+}
+
+/* Powerup Duration: Hourglass */
+.icon-powerupDuration::before {
+    width: 20px;
+    height: 30px;
+    border: 2px solid #ff0;
+    clip-path: polygon(0% 0%, 100% 0%, 50% 50%, 100% 100%, 0% 100%, 50% 50%);
+    box-shadow: 0 0 10px #ff0;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Permanent Upgrade Icons (Shop) */
+.icon-BASE_DAMAGE::before {
+    width: 40px;
+    height: 6px;
+    background: #f0f;
+    transform: rotate(45deg);
+    box-shadow: 0 0 15px #f0f;
+}
+
+.icon-BASE_DAMAGE::after {
+    width: 40px;
+    height: 6px;
+    background: #f0f;
+    transform: rotate(-45deg);
+    box-shadow: 0 0 15px #f0f;
+}
+
+.icon-BASE_HP::before {
+    width: 35px;
+    height: 35px;
+    background: #0f0;
+    transform: rotate(45deg);
+    box-shadow: 0 0 15px #0f0;
+}
+
+.icon-BASE_SHIELD::before {
+    width: 45px;
+    height: 45px;
+    border: 3px solid #0ff;
+    border-radius: 50%;
+    box-shadow: 0 0 20px #0ff;
+}
+
+.icon-BASE_FIRE_RATE::before {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #ff0;
+    border-radius: 50%;
+    border-top-color: transparent;
+    box-shadow: 0 0 15px #ff0;
+    animation: rotate 2s linear infinite;
+}
+
+/* Teleport Icon: Geometric portal */
+.icon-TELEPORT::before {
+    width: 40px;
+    height: 20px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 15px #fff;
+    animation: pulse 2.5s ease-in-out infinite;
+}
+
+.icon-TELEPORT::after {
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+}
+
+/* Missile Launcher: Sleek rocket shape */
+.icon-MISSILE_LAUNCHER::before {
+    width: 15px;
+    height: 35px;
+    background: #0ff;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 100%, 0% 100%, 0% 25%);
+    box-shadow: 0 0 15px #0ff;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.3);
+        opacity: 1;
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
 }

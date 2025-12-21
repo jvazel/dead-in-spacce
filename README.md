@@ -21,11 +21,12 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
 ## 🎮 Fonctionnalités
 
 ### Système de Boss
-- **Vagues de Boss** : Un boss imposant apparaît toutes les 2 vagues (configurable).
+- **Vagues de Boss** : Un boss imposant apparaît toutes les 4 vagues (configurable).
 - **Variété de Boss** : Le jeu alterne entre différents types de boss pour varier le gameplay :
     - **Boss Alpha** : Utilise des tirs circulaires en spirale et des salves ciblées.
     - **Boss Beta** : Utilise des tirs triples (tri-shot) et pose des mines explosives.
 - **IA Évolutive** : Chaque boss possède ses propres patterns de mouvement et sa difficulté augmente avec les vagues.
+- **Immunité Tactique** : Les boss sont immunisés contre les déclenchements et les dégâts des mines pour maintenir le défi.
 
 ### Ennemis et Obstacles
 - **OVNIs** : Apparaissent périodiquement, tirent sur le joueur et se déplacent avec un mouvement sinusoïdal.
@@ -34,7 +35,7 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
 - **Astéroïdes** : Système de fragmentation (large → 2× medium → 2× small).
 
 ### Progression Rogue-lite
-- **Améliorations Permanentes** : Dépensez vos crédits dans le menu Game Over pour améliorer votre vaisseau de façon persistante :
+- **Améliorations Permanentes** : Dépensez vos crédits dans le menu Game Over pour améliorer votre vaisseau de façon persistante. Chaque amélioration dispose d'une **icône néon dédiée** :
     - **PV & Bouclier** : Augmentez votre résistance maximale.
     - **Dégâts** : Améliorez la puissance de chaque projectile.
     - **Cadence de Tir** : Réduisez le délai entre les tirs.
@@ -45,6 +46,7 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
     - **PV & Bouclier** : Augmente votre résistance.
     - **Ravitaillement Missiles** : Récupère instantanément +3 missiles.
     - **Drones** : Ajoute un drone de soutien orbital.
+    - **Bonus Étendu** : Augmente la durée de TOUS les bonus (Power-ups) de +20%.
 - **Power-ups Temporaires** : Récupérez des bonus orbes colorés sur les ennemis détruits :
     - **Multi-shot** (Orange) : Tire plusieurs balles en éventail.
     - **Laser** (Rouge orangé) : Un rayon continu haute précision qui traverse tout.
@@ -56,6 +58,16 @@ Ensuite, ouvrez votre navigateur à `http://localhost:3500`.
     - **Afterburner** (Cyan) : Crée une traînée de feu destructrice derrière le vaisseau.
     - **Invulnerability** (Jaune/Or) : Immunité temporaire aux dégâts.
     - **Health** (Vert) : Restaure une partie des points de vie.
+- **Explosive** (Rouge) : Les impacts génèrent des micro-explosions et des dégâts de zone (AOE).
+
+### Synergies de Combat
+Le jeu propose des synergies puissantes lorsque plusieurs bonus sont actifs simultanément :
+- **Laser Explosif** (`LASER` + `EXPLOSIVE`) : Le point d'impact du laser génère des micro-explosions continues.
+- **Drones Temporaires** (`INVULNERABILITY` + `MULTISHOT`) : Fait apparaître deux drones de soutien supplémentaires pendant toute la durée des bonus.
+- **Postcombustion Insta-Mines** (`AFTERBURNER` + `MINE`) : Quadruple la vitesse de pose des mines tant que l'Afterburner est actif.
+- **Laser à Chaîne** (`LASER` + `PIERCING` + `BOUNCE`) : Le laser arc entre les cibles proches, infligeant des dégâts multiples.
+- **Pluie de Missiles** (`MISSILES` + `MULTISHOT`) : Le lance-missiles tire une salve de 3 missiles en éventail.
+- **Bouclier de Siphon** (`INVULNERABILITY` + `HEALTH`) : Chaque destruction pendant l'invulnérabilité a une chance de restaurer PV et bouclier.
 
 ## 🎯 Contrôles
 

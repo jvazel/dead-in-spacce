@@ -132,4 +132,5 @@ Composants d'interface complexes :
 ### Optimisations Techniques
 - **Système de Dégâts Unifié** : Architecture harmonisée utilisant une méthode `takeDamage` pour toutes les entités destructibles, simplifiant la maintenance et assurant un comportement cohérent des projectiles et du laser.
 - **Calibrage Laser (DPS)** : Le laser utilise désormais un calcul basé sur le temps réel (`dt`), garantissant une puissance équilibrée indépendamment du taux de rafraîchissement de l'écran (60Hz, 144Hz, etc.).
+- **Système de Surcharge (Heat)** : Implémentation d'une gestion de chaleur pour le vaisseau. Introduit une couche de stratégie (Risk-Reward) où le joueur peut infliger +50% de dégâts en restant proche de la limite de surchauffe.
 - **Performance** : Réduction du nombre d'itérations dans le gestionnaire de collisions grâce à l'unification des boucles de détection.

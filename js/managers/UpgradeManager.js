@@ -54,9 +54,9 @@ export class UpgradeManager {
             case 'hp':
                 game.ship.hp = Math.min(game.ship.hp + upgrade.VALUE, game.ship.maxHp);
                 break;
-            case 'maxShield':
-                game.ship.maxShield += upgrade.VALUE;
-                game.ship.shield += upgrade.VALUE;
+            case 'maxEnergy':
+                game.ship.maxEnergy += upgrade.VALUE;
+                game.ship.energy = Math.min(game.ship.energy + upgrade.VALUE, game.ship.maxEnergy);
                 break;
             case 'multiShotDuration':
                 game.ship.multiShotDuration += upgrade.VALUE;

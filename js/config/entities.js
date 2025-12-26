@@ -6,11 +6,14 @@ export const ENTITY_CONFIG = {
         FRICTION: 0.98,
         BASE_HP: 100,
         BASE_MAX_HP: 100,
-        BASE_SHIELD: 0,
-        BASE_MAX_SHIELD: 0,
+        BASE_ENERGY: 100,          // Énergie de départ
+        BASE_MAX_ENERGY: 100,      // Capacité max de départ
         BASE_FIRE_RATE: 0.4,
         BASE_DAMAGE: 20, // Base damage per bullet
-        SHIELD_REGEN_RATE: 0.5,
+        ENERGY: {
+            COST_PER_PARRY: 25,    // 25 énergie par parade (4 parades avec 100)
+            RECHARGE_RATE: 10      // +10/sec pendant surcharge active
+        },
         INVULNERABILITY_DURATION: 5,
         COLLISION_DAMAGE: 20,
         HEAT: {

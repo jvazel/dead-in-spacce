@@ -7,7 +7,7 @@ export class SaveManager {
             upgrades: {
                 BASE_DAMAGE: 0,
                 BASE_HP: 0,
-                BASE_SHIELD: 0,
+                BASE_ENERGY: 0,
                 TELEPORT: 0, // 0 = locked, 1 = unlocked
                 BASE_FIRE_RATE: 0,
                 MISSILE_LAUNCHER: 0

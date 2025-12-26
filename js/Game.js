@@ -107,7 +107,7 @@ export class Game {
             vesselId: vesselId,
             damage: (CONFIG.PERMANENT_UPGRADES.BASE_DAMAGE.INCREMENT * this.saveManager.getUpgradeLevel('BASE_DAMAGE')) + (vesselConfig.STATS.damage || 0),
             hp: (CONFIG.PERMANENT_UPGRADES.BASE_HP.INCREMENT * this.saveManager.getUpgradeLevel('BASE_HP')) + (vesselConfig.STATS.hp || 0),
-            shield: (CONFIG.PERMANENT_UPGRADES.BASE_SHIELD.INCREMENT * this.saveManager.getUpgradeLevel('BASE_SHIELD')) + (vesselConfig.STATS.shield || 0),
+            energy: CONFIG.PERMANENT_UPGRADES.BASE_ENERGY.INCREMENT * this.saveManager.getUpgradeLevel('BASE_ENERGY'),
             fireRate: CONFIG.PERMANENT_UPGRADES.BASE_FIRE_RATE.INCREMENT * this.saveManager.getUpgradeLevel('BASE_FIRE_RATE'),
             teleport: (this.saveManager.getUpgradeLevel('TELEPORT') > 0) || !!vesselConfig.STATS.teleport,
             missileLauncher: this.saveManager.getUpgradeLevel('MISSILE_LAUNCHER'),

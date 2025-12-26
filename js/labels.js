@@ -1,7 +1,7 @@
 export const LABELS = {
     // HUD
     HP: 'PV',
-    SHIELD: 'Bouclier',
+    ENERGY: 'Énergie',
     WAVE: 'Vague',
     CREDITS: 'Crédits',
     MISSILES: 'Missiles',
@@ -26,7 +26,7 @@ export const LABELS = {
     // Shop Items
     REPAIR_HULL: 'Réparer la Coque (+25 PV)',
     UPGRADE_HULL: 'Améliorer la Coque (+20 PV Max)',
-    UPGRADE_SHIELD: 'Améliorer le Bouclier (+1 Max)',
+    UPGRADE_ENERGY: 'Capacité Énergétique (+25)',
     UPGRADE_DAMAGE: 'Dégâts (+10)', // New
     FIRE_RATE: 'Cadence de Tir (+10%)',
     MULTISHOT_DURATION: 'Durée Multi-Tirs (+2s)',

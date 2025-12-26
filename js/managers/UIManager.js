@@ -9,13 +9,34 @@ export class UIManager {
     updateHUD(game) {
         if (game.ship) {
             const hpPercent = (game.ship.hp / game.ship.maxHp) * 100;
-            const shieldPercent = game.ship.maxShield > 0 ? (game.ship.shield / game.ship.maxShield) * 100 : 0;
 
             document.getElementById('hp-bar').style.width = `${Math.max(0, hpPercent)}%`;
-            document.getElementById('shield-bar').style.width = `${Math.max(0, shieldPercent)}%`;
 
             document.getElementById('hud-hp-text').innerText = `${Math.ceil(game.ship.hp)}/${Math.ceil(game.ship.maxHp)}`;
-            document.getElementById('hud-shield-text').innerText = Math.ceil(game.ship.shield);
+
+            // Energy HUD
+            const energyPercent = (game.ship.energy / game.ship.maxEnergy) * 100;
+            const energyBar = document.getElementById('energy-bar');
+            const energyStatus = document.getElementById('hud-energy-status');
+
+            energyBar.style.width = `${Math.max(0, energyPercent)}%`;
+
+            // Classe "low" si énergie insuffisante pour une parade
+            if (game.ship.energy < CONFIG.SHIP.ENERGY.COST_PER_PARRY) {
+                energyBar.classList.add('low');
+                energyStatus.innerText = 'VIDE';
+                energyStatus.style.color = '#ff0044';
+            } else {
+                energyBar.classList.remove('low');
+                // Afficher "EN RECHARGE" si la surcharge est active
+                if (game.ship.heat > CONFIG.SHIP.HEAT.DAMAGE_BONUS_THRESHOLD && !game.ship.overheated) {
+                    energyStatus.innerText = 'RECHARGE ⚡';
+                    energyStatus.style.color = '#ffaa00';
+                } else {
+                    energyStatus.innerText = 'PRÊT';
+                    energyStatus.style.color = '#aa44ff';
+                }
+            }
 
             // Missile HUD
             const missileHUD = document.getElementById('hud-missiles');

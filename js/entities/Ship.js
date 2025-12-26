@@ -31,10 +31,8 @@ export class Ship extends Entity {
         // Stats
         this.maxHp = CONFIG.SHIP.BASE_MAX_HP + (stats.hp || 0);
         this.hp = CONFIG.SHIP.BASE_HP + (stats.hp || 0); // Start full
-        this.maxShield = CONFIG.SHIP.BASE_MAX_SHIELD + (stats.shield || 0);
-        this.shield = CONFIG.SHIP.BASE_SHIELD + (stats.shield || 0); // Start full
-        this.maxShield = CONFIG.SHIP.BASE_MAX_SHIELD + (stats.shield || 0);
-        this.shield = CONFIG.SHIP.BASE_SHIELD + (stats.shield || 0); // Start full
+        this.maxEnergy = CONFIG.SHIP.BASE_MAX_ENERGY + (stats.energy || 0);
+        this.energy = CONFIG.SHIP.BASE_ENERGY + (stats.energy || 0); // Start full
         // Reduce delay (increase rate)
         this.fireRateDelay = Math.max(0.1, CONFIG.SHIP.BASE_FIRE_RATE - (stats.fireRate || 0));
         this.damage = CONFIG.SHIP.BASE_DAMAGE + (stats.damage || 0);
@@ -120,10 +118,12 @@ export class Ship extends Entity {
             this.tryTeleport(game);
         }
 
-        // Parry
+        // Parry - vérifier l'énergie disponible
         const parryKeyDown = input.isDown('AltLeft') || input.isDown('AltRight');
         if (parryKeyDown && !this.parryKeyPressed && this.parryCooldownTimer <= 0) {
-            this.triggerParry();
+            if (this.energy >= CONFIG.SHIP.ENERGY.COST_PER_PARRY) {
+                this.triggerParry();
+            }
         }
         this.parryKeyPressed = parryKeyDown;
 
@@ -159,11 +159,9 @@ export class Ship extends Entity {
 
         super.update(dt);
 
-        // Shield Regen
-        if (this.maxShield > 0 && this.shield < this.maxShield) {
-            const regenRate = CONFIG.SHIP.SHIELD_REGEN_RATE * (this.inNebula ? CONFIG.HAZARDS.NEBULA_CLOUD.SHIELD_REGEN_MULTIPLIER : 1);
-            this.shield += regenRate * dt;
-            if (this.shield > this.maxShield) this.shield = this.maxShield;
+        // Energy Recharge (pendant surcharge active, pas en surchauffe)
+        if (!this.overheated && this.heat > CONFIG.SHIP.HEAT.DAMAGE_BONUS_THRESHOLD) {
+            this.energy = Math.min(this.maxEnergy, this.energy + CONFIG.SHIP.ENERGY.RECHARGE_RATE * dt);
         }
 
         // Invulnerability
@@ -320,17 +318,7 @@ export class Ship extends Entity {
         // Reset blend mode
         ctx.globalCompositeOperation = 'source-over';
 
-        // Draw Shield
-        if (this.shield > 1) {
-            ctx.beginPath();
-            ctx.arc(0, 0, this.radius + 5, 0, Math.PI * 2);
-            ctx.strokeStyle = `rgba(0, 255, 255, ${this.shield / this.maxShield})`;
-            ctx.lineWidth = 2;
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = CONFIG.VISUALS.COLORS.SHIP_GLOW;
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-        }
+        ctx.shadowBlur = 0;
 
         if (this.invulnerable && Math.floor(Date.now() / 100) % 2 === 0) {
             ctx.beginPath();
@@ -511,6 +499,7 @@ export class Ship extends Entity {
     }
 
     triggerParry() {
+        this.energy -= CONFIG.SHIP.ENERGY.COST_PER_PARRY;
         this.parryActive = true;
         this.parryTimer = CONFIG.SHIP.PARRY.DURATION;
         this.parryCooldownTimer = CONFIG.SHIP.PARRY.COOLDOWN;
@@ -518,16 +507,10 @@ export class Ship extends Entity {
 
     takeDamage(amount) {
         if (this.invulnerable) return;
-
-        // Shield Logic: 1 Shield Point absorbs 1 Hit completely
-        if (this.shield >= 1) {
-            this.shield -= 1;
-            // Shield absorbs the damage, HP is untouched
-        } else {
-            // If shield is less than 1 (e.g. recharging), it breaks and HP triggers
-            this.hp -= amount;
-            this.shield = 0;
-        }
+        // Si le bouclier est actif (parry), il absorbe les dégâts
+        if (this.parryActive) return;
+        // Les dégâts vont directement aux PV
+        this.hp -= amount;
     }
 
     addDrone(isTemporary = false) {

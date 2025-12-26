@@ -53,9 +53,14 @@
     border-right: 2px solid rgba(255, 255, 255, 0.5);
 }
 
-.shield-fill {
-    background: linear-gradient(90deg, #00ffff 0%, #44ffff 50%, #66ffff 100%);
+.energy-fill {
+    background: linear-gradient(90deg, #8800ff 0%, #aa44ff 50%, #cc66ff 100%);
     border-right: 2px solid rgba(255, 255, 255, 0.5);
+    transition: width 0.2s ease;
+}
+
+.energy-fill.low {
+    background: linear-gradient(90deg, #ff0044 0%, #ff4466 50%, #ff6688 100%);
 }
 
 .heat-fill {

@@ -49,11 +49,11 @@ export const UPGRADE_CONFIG = {
                 WEIGHT: 1
             },
             {
-                ID: 'SHIELD_UP',
-                LABEL: 'Générateur de Bouclier',
-                DESCRIPTION: 'Augmente le bouclier max de +1.',
-                TYPE: 'maxShield',
-                VALUE: 1,
+                ID: 'ENERGY_UP',
+                LABEL: 'Capacité Énergétique',
+                DESCRIPTION: 'Augmente l\'énergie max de +25 (+1 parade).',
+                TYPE: 'maxEnergy',
+                VALUE: 25,
                 WEIGHT: 1
             },
             {
@@ -123,13 +123,13 @@ export const UPGRADE_CONFIG = {
             MAX_LEVEL: 10,
             DESCRIPTION: 'Augmente les points de vie de départ (+10).'
         },
-        BASE_SHIELD: {
-            LABEL: 'Bouclier Initial',
+        BASE_ENERGY: {
+            LABEL: 'Réserves d\'Énergie',
             COST: 150,
             COST_SCALING: 1.5,
-            INCREMENT: 1,
+            INCREMENT: 25,
             MAX_LEVEL: 5,
-            DESCRIPTION: 'Ajoute du bouclier dès le début (+1).'
+            DESCRIPTION: 'Augmente l\'énergie de départ (+25, soit +1 parade).'
         },
         TELEPORT: {
             LABEL: 'Téléportation (Flèche Bas)',
